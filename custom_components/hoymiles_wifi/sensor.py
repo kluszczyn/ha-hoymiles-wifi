@@ -1145,6 +1145,36 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.POWER,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    HoymilesEnergyStorageSensorEntityDescription(
+        key="[<inverter_count>].inverter.param.fan_speed_1",
+        translation_key="inverter_fan_speed",
+        native_unit_of_measurement=PERCENTAGE,
+        device_class=None,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    HoymilesEnergyStorageSensorEntityDescription(
+        key="[<inverter_count>].inverter.param.fan_speed_2",
+        translation_key="inverter_fan_speed_2",
+        native_unit_of_measurement=PERCENTAGE,
+        device_class=None,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    HoymilesEnergyStorageSensorEntityDescription(
+        key="[<inverter_count>].inverter.param.temp_inverter",
+        translation_key="inverter_temperature",
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        conversion_factor=0.1,
+    ),
+    HoymilesEnergyStorageSensorEntityDescription(
+        key="[<inverter_count>].inverter.param.temp_pv",
+        translation_key="inverter_pv_temperature",
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        conversion_factor=0.1,
+    ),
 ]
 
 
@@ -1698,6 +1728,24 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
         self._last_known_value = None
         self._last_successful_update = None
         self._last_update_state = None
+
+        # Custom Master-Slave naming support
+        # We need to find which inverter index is used to determine if it is a Slave.
+        # description.key is in format: "[index].production.energy_to_load"
+        if description.key.startswith("[") and "]" in description.key:
+            try:
+                inv_idx = int(description.key.split("[")[1].split("]")[0])
+                if inv_idx > 0:
+                    # It's a Slave inverter (S1 for index 1, S2 for index 2, etc.)
+                    prefix = f"S{inv_idx} "
+                    if self._attr_name:
+                        self._attr_name = f"{prefix}{self._attr_name}"
+                    # Update translation placeholders so HA UI constructs the name with prefix if translation key is used
+                    self._attr_translation_placeholders = self._attr_translation_placeholders or {}
+                    if "name" in self._attr_translation_placeholders:
+                        self._attr_translation_placeholders["name"] = f"{prefix}{self._attr_translation_placeholders['name']}"
+            except Exception:
+                pass
 
         self.update_state_value()
 

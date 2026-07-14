@@ -16,7 +16,7 @@ from hoymiles_wifi.hoymiles import (
     get_meter_model_name,
 )
 
-from .const import CONF_DTU_SERIAL_NUMBER, DOMAIN
+from .const import CONF_DTU_SERIAL_NUMBER, DOMAIN, CONF_HYBRID_INVERTERS
 from .coordinator import (
     HoymilesDataUpdateCoordinator,
 )
@@ -66,6 +66,8 @@ class HoymilesEntity(Entity):
 
         serial_number = str(self.entity_description.serial_number)
 
+        # Determine Master vs Slave name and nominal battery capacity info for device model
+        device_name_override = None
         if self.entity_description.is_dtu_sensor is True:
             device_translation_key = "dtu"
             device_model = get_dtu_model_name(self.entity_description.serial_number)
@@ -80,8 +82,37 @@ class HoymilesEntity(Entity):
                     hasattr(self.entity_description, "model_name")
                     and self.entity_description.model_name
                 ):
-                    device_model = self.entity_description.model_name
+                    # We are a hybrid inverter
+                    raw_model = self.entity_description.model_name
                     device_translation_key = "hybrid_inverter"
+                    
+                    # Extract index to check Master/Slave routing
+                    # self.entity_description.key is in format: "[index].production.energy_to_load"
+                    inv_idx = 0
+                    if self.entity_description.key.startswith("[") and "]" in self.entity_description.key:
+                        try:
+                            inv_idx = int(self.entity_description.key.split("[")[1].split("]")[0])
+                        except Exception:
+                            pass
+                    
+                    # Look up in coordinator/config_entry hybrid_inverters list to find capacity
+                    bms_cap_str = ""
+                    hybrid_inverters = config_entry.data.get(CONF_HYBRID_INVERTERS, [])
+                    if 0 <= inv_idx < len(hybrid_inverters):
+                        # The registration response info (or config_entry data) could have bms_cap
+                        inverter_info = hybrid_inverters[inv_idx]
+                        bms_cap = inverter_info.get("bms_cap", 0)
+                        if bms_cap:
+                            bms_cap_str = f", {bms_cap * 0.1:.1f} kWh battery"
+                    
+                    role_str = "Master" if inv_idx == 0 else f"Slave #{inv_idx}"
+                    device_model = f"{raw_model} ({role_str}{bms_cap_str})"
+                    
+                    # Ensure device name in registry is formatted: "Inverter" (Master) or "Inverter S1", "Inverter S2" etc.
+                    if inv_idx == 0:
+                        device_name_override = "Inverter"
+                    else:
+                        device_name_override = f"Inverter S{inv_idx}"
                 else:
                     device_model = get_inverter_model_name(
                         self.entity_description.serial_number
@@ -95,6 +126,8 @@ class HoymilesEntity(Entity):
             serial_number=serial_number.upper(),
             model=device_model,
         )
+        if device_name_override:
+            device_info["name"] = device_name_override
 
         if not self.entity_description.is_dtu_sensor:
             device_info["via_device"] = (DOMAIN, dtu_serial_number)

@@ -154,12 +154,27 @@ class HoymilesEnergyStorageUpdateCoordinator(HoymilesDataUpdateCoordinator):
         """Update data via library."""
         _LOGGER.debug("Hoymiles energy storage coordinator update")
 
+        from hoymiles_wifi.hys import HysClient
+        hys = HysClient(self._dtu)
         responses = []
 
-        for inverter in self._inverters:
-            storage_data = await self._dtu.async_get_energy_storage_data(
-                dtu_serial_number=int(self._dtu_serial_number),
-                inverter_serial_number=inverter["inverter_serial_number"],
+        # inverter has keys: inverter_serial_number, model_name, and optionally addr (default to index + 1)
+        for idx, inverter in enumerate(self._inverters):
+            # In Master-Slave topology:
+            # - Master (index 0) has addr=1 -> number=1 (represented as slave_index = 1)
+            # - Slave S1 (index 1) has addr=2 -> number=2
+            slave_index = idx + 1
+            
+            _LOGGER.debug(
+                "Fetching telemetry for hybrid inverter %s (index: %d, routing number: %d)",
+                inverter["inverter_serial_number"],
+                idx,
+                slave_index,
+            )
+            storage_data = await hys.async_get_hys_telemetry(
+                dtu_sn=int(self._dtu_serial_number),
+                inverter_sn=int(inverter["inverter_serial_number"]),
+                slave_index=slave_index,
             )
             if storage_data is not None:
                 responses.append(storage_data)
