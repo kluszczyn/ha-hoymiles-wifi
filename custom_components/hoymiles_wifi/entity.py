@@ -53,7 +53,37 @@ class HoymilesEntity(Entity):
         super().__init__()
         self.entity_description = description
         self._config_entry = config_entry
-        self._attr_unique_id = f"hoymiles_{config_entry.entry_id}_{description.key}"
+        # Determine if this is a hybrid inverter description
+        key = description.key
+        suggested_object_id = None
+        
+        # Check if we are in a multi-inverter configuration
+        hybrid_inverters = config_entry.data.get(CONF_HYBRID_INVERTERS, [])
+        is_multi_inverter = len(hybrid_inverters) > 1
+
+        if key.startswith("[") and "]" in key:
+            try:
+                # Extract index
+                inv_idx = int(key.split("[")[1].split("]")[0])
+                # Clean description key parts for standard unique ID
+                cleaned_key = key.replace(f"[{inv_idx}].", "")
+
+                if is_multi_inverter:
+                    infix = "m" if inv_idx == 0 else f"s{inv_idx}"
+                    # Format suggested object id to force clean HA entity names without _2
+                    suggested_object_id = f"hybrid_inverter_{infix}_{cleaned_key.replace('.', '_')}"
+                    # Format unique id to prevent collisions
+                    self._attr_unique_id = f"hoymiles_{config_entry.entry_id}_hybrid_inverter_{infix}_{cleaned_key}"
+                else:
+                    # Single hybrid inverter - preserve 100% backwards compatibility
+                    self._attr_unique_id = f"hoymiles_{config_entry.entry_id}_{cleaned_key}"
+            except Exception:
+                self._attr_unique_id = f"hoymiles_{config_entry.entry_id}_{key}"
+        else:
+            self._attr_unique_id = f"hoymiles_{config_entry.entry_id}_{key}"
+
+        if suggested_object_id:
+            self._attr_suggested_object_id = suggested_object_id
 
         if description.port_number:
             self._attr_translation_placeholders = {

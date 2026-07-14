@@ -95,6 +95,7 @@ class HoymilesEnergyStorageSensorEntityDescription(
     version_prefix: str = None
     assume_state: bool = False
     force_keep_maximum_within_day: bool = False
+    suggested_display_precision: int = None
 
 
 @dataclass(frozen=True)
@@ -647,6 +648,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].production.energy_to_battery",
@@ -655,6 +657,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].production.energy_to_grid",
@@ -663,6 +666,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].consumption.energy_from_pv",
@@ -671,6 +675,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].consumption.energy_from_battery",
@@ -679,6 +684,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].consumption.energy_from_grid",
@@ -687,6 +693,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].pv_panels[<pv_panel_count>].voltage",
@@ -719,6 +726,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.state_of_charge",
@@ -741,6 +749,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.internal_charge_mode",
@@ -764,7 +773,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        conversion_factor=0.01,
+        conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.cell_voltage_low",
@@ -772,7 +782,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        conversion_factor=0.01,
+        conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.temp_high_charge",
@@ -813,6 +824,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.energy_discharged",
@@ -821,6 +833,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_charge_high",
@@ -829,6 +842,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.001,
+        suggested_display_precision=3,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_charge_low",
@@ -837,6 +851,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.001,
+        suggested_display_precision=3,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_module_high",
@@ -844,7 +859,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        conversion_factor=0.01,
+        conversion_factor=0.001,
+        suggested_display_precision=3,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_module_low",
@@ -852,7 +868,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        conversion_factor=0.01,
+        conversion_factor=0.001,
+        suggested_display_precision=3,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].grid.param.frequency",
@@ -907,6 +924,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].grid.phases[<phase_count>].energy_consumed",
@@ -915,6 +933,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].load.param.status",
@@ -951,6 +970,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.status",
@@ -1016,18 +1036,17 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.phases[<phase_count>].dc_current",
-        translation_key="inverter_dc_current_phase",
+        translation_key="inverter_ac_dc_injection_current_phase",
         native_unit_of_measurement=UnitOfElectricCurrent.MILLIAMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.phases[<phase_count>].dc_voltage",
-        translation_key="inverter_dc_voltage_phase",
+        translation_key="inverter_ac_dc_injection_voltage_phase",
         native_unit_of_measurement=UnitOfElectricPotential.MILLIVOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        conversion_factor=0.1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.phases[<phase_count>].eps_voltage",
@@ -1102,6 +1121,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENERGY,
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
+        suggested_display_precision=1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].power_flow.pv_to_load",
@@ -1403,8 +1423,23 @@ def get_sensors_for_hybrid_inverter_description(
                     sensor = class_name(config_entry, updated_description, coordinator)
                     sensors.append(sensor)
             elif "<phase_count>" in description.key:
-                # TODO: Dynamically determine number of phases
-                for phase_index in range(0, 3):
+                # Dynamic Phase Filtering (1-Phase vs 3-Phase Support)
+                # Check phase B voltage from coordinator data to dynamically set phase count
+                is_three_phase = False
+                if (
+                    coordinator.data
+                    and len(coordinator.data) > index
+                    and hasattr(coordinator.data[index], "grid")
+                    and hasattr(coordinator.data[index].grid, "phases")
+                    and len(coordinator.data[index].grid.phases) >= 3
+                ):
+                    phase_b = coordinator.data[index].grid.phases[1]
+                    if getattr(phase_b, "voltage", 0) > 0:
+                        is_three_phase = True
+
+                phases_to_create = [0] if not is_three_phase else [0, 1, 2]
+
+                for phase_index in phases_to_create:
                     new_phase_index_key = new_key.replace(
                         "<phase_count>", str(phase_index)
                     )
@@ -1746,6 +1781,9 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
                         self._attr_translation_placeholders["name"] = f"{prefix}{self._attr_translation_placeholders['name']}"
             except Exception:
                 pass
+
+        if description.suggested_display_precision is not None:
+            self._attr_suggested_display_precision = description.suggested_display_precision
 
         self.update_state_value()
 

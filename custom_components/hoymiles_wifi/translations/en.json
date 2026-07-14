@@ -339,11 +339,11 @@
       "inverter_reactive_power_phase": {
         "name": "Inverter reactive power phase {phase}"
       },
-      "inverter_dc_current_phase": {
-        "name": "Inverter DC current phase {phase}"
+      "inverter_ac_dc_injection_current_phase": {
+        "name": "Inverter AC DC-Injection Phase {phase}"
       },
-      "inverter_dc_voltage_phase": {
-        "name": "Inverter DC voltage phase {phase}"
+      "inverter_ac_dc_injection_voltage_phase": {
+        "name": "Inverter AC DC-Injection Phase {phase}"
       },
       "inverter_eps_voltage_phase": {
         "name": "Inverter EPS voltage phase {phase}"

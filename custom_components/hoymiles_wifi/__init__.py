@@ -154,6 +154,12 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     _LOGGER.debug(f"  config_entry_id: {config_entry.entry_id}")
 
     hass.data[DOMAIN][config_entry.entry_id] = hass_data
+    if hybrid_inverters:
+        try:
+            await energy_storage_data_coordinator.async_config_entry_first_refresh()
+        except Exception as e:
+            _LOGGER.warning("First refresh of energy storage coordinator failed: %s", e)
+
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
 
     if single_phase_inverters or three_phase_inverters or meters:
@@ -161,7 +167,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         await config_coordinator.async_config_entry_first_refresh()
         await app_info_update_coordinator.async_config_entry_first_refresh()
     if hybrid_inverters:
-        await energy_storage_data_coordinator.async_config_entry_first_refresh()
         hass.services.async_register(
             domain=DOMAIN,
             service="set_bms_mode",
