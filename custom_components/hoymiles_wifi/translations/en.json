@@ -291,8 +291,8 @@
       "grid_power_factor_phase": {
         "name": "Grid power factor phase {phase}"
       },
-      "grid_energy_frequency_phase": {
-        "name": "Grid energy frequency phase {phase}"
+      "grid_energy_exported_phase": {
+        "name": "Grid energy exported phase {phase}"
       },
       "grid_energy_consumed_phase": {
         "name": "Grid energy consumed phase {phase}"
@@ -326,6 +326,15 @@
       },
       "inverter_drm_signal": {
         "name": "Inverter DRM signal"
+      },
+      "inverter_temperature_1": {
+        "name": "Inverter temperature 1"
+      },
+      "inverter_temperature_2": {
+        "name": "Inverter temperature 2"
+      },
+      "inverter_temperature_3": {
+        "name": "Inverter temperature 3"
       },
       "inverter_voltage_phase": {
         "name": "Inverter voltage phase {phase}"
