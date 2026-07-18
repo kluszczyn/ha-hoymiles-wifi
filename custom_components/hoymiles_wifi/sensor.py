@@ -1169,27 +1169,24 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
 
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.fan_speed_1",
-        translation_key="inverter_temperature_1",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
+        translation_key="inverter_fan_speed",
+        native_unit_of_measurement="RPM",
+        device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
-        conversion_factor=0.1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.fan_speed_2",
-        translation_key="inverter_temperature_2",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
+        translation_key="inverter_fan_speed_2",
+        native_unit_of_measurement="RPM",
+        device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
-        conversion_factor=0.1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.temp_inverter",
-        translation_key="inverter_temperature_3",
+        translation_key="inverter_temperature",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
-        conversion_factor=0.1,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.temp_pv",
@@ -1197,7 +1194,13 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
-        conversion_factor=0.1,
+    ),
+    HoymilesEnergyStorageSensorEntityDescription(
+        key="[<inverter_count>].inverter.param.temp_internal",
+        translation_key="inverter_internal_temperature",
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
 ]
 
@@ -1409,6 +1412,19 @@ def get_sensors_for_hybrid_inverter_description(
 
     if "<inverter_count>" in description.key:
         for index, inverter in enumerate(inverters):
+            # Master/Slave Node Isolation:
+            # - Master (index == 0) gets all sensors.
+            # - Slaves (index > 0) only get sensors in the pv_panels (pvs), battery_management (bms) and inverter (inv) trees.
+            # Grid, load, and power flow are DTU-level or shared infrastructure, so we skip them for slaves.
+            if index > 0:
+                is_allowed_slave_sensor = False
+                for allowed_sub in (".pv_panels", ".battery_management", ".inverter."):
+                    if allowed_sub in description.key:
+                        is_allowed_slave_sensor = True
+                        break
+                if not is_allowed_slave_sensor:
+                    continue
+
             new_key = description.key.replace("<inverter_count>", str(index))
 
             if "<pv_panel_count>" in description.key:
@@ -1800,26 +1816,45 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
     @property
     def native_value(self):
         """Return the native value of the sensor."""
-        if self._native_value == 0.0:
-            if self.entity_description.assume_state:
-                return self._last_known_value
-            elif (
-                self._last_successful_update is not None
-                and datetime.now() - self._last_successful_update
-                <= timedelta(minutes=3)
-            ):
-                _LOGGER.debug(
-                    "[%s] Returning last known value: %s, instead of 0.0 to cope with inverter in offline mode.",
-                    self.name,
-                    self._last_known_value,
-                )
-                self._assumed_state = True
-                return self._last_known_value
-        else:
+        if self._native_value is not None:
             self._last_successful_update = datetime.now()
             self._last_known_value = self._native_value
+            self._assumed_state = False
+            return self._native_value
+
+        # Zero-Handling Guard: If value is None, try restoring from last known value
+        if self.entity_description.assume_state:
+            return self._last_known_value
+        elif (
+            self._last_successful_update is not None
+            and datetime.now() - self._last_successful_update
+            <= timedelta(minutes=3)
+        ):
+            _LOGGER.debug(
+                "[%s] Returning last known value: %s, instead of None to cope with inverter in offline mode.",
+                self.name,
+                self._last_known_value,
+            )
+            self._assumed_state = True
+            return self._last_known_value
+
         self._assumed_state = False
-        return self._native_value
+        return None
+
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes."""
+        # Traceability Attribute: Expose binary/JSON extraction path
+        # Map [<inverter_count>] index to m/s1/s2 to represent real path
+        path = self._attribute_name
+        if path.startswith("[") and "]" in path:
+            try:
+                inv_idx = int(path.split("[")[1].split("]")[0])
+                role_infix = "m" if inv_idx == 0 else f"s{inv_idx}"
+                path = path.replace(f"[{inv_idx}]", role_infix)
+            except Exception:
+                pass
+        return {"source": path}
 
     @property
     def assumed_state(self):
