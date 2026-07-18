@@ -1,4 +1,4 @@
-"""Support for Hoymiles sensors."""
+"""Support for Hoymiles sensors mapped with modern HA Core standards."""
 
 import dataclasses
 from dataclasses import dataclass
@@ -27,6 +27,7 @@ from homeassistant.const import (
     UnitOfReactivePower,
 )
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 import hoymiles_wifi.hoymiles
 from hoymiles_wifi.hoymiles import DTUType, get_dtu_model_type
@@ -88,7 +89,6 @@ class HoymilesEnergyStorageSensorEntityDescription(
 ):
     """Describes Hoymiles energy storage data sensor entity."""
 
-    model_name: str = None
     conversion_factor: float = None
     reset_at_midnight: bool = False
     version_translation_function: str = None
@@ -96,6 +96,7 @@ class HoymilesEnergyStorageSensorEntityDescription(
     assume_state: bool = False
     force_keep_maximum_within_day: bool = False
     suggested_display_precision: int = None
+    is_bms_device: bool = False  # True kieruje encję do urządzenia Battery, False zostawia w Inverterze
 
 
 @dataclass(frozen=True)
@@ -642,11 +643,17 @@ APP_INFO_SENSORS: tuple[HoymilesSensorEntityDescription, ...] = (
 
 HOYMILES_ENERGY_STORAGE_SENSORS = [
     HoymilesEnergyStorageSensorEntityDescription(
+        key="[<inverter_count>].ems_mode",
+        translation_key="ems_mode",
+        device_class=None,
+    ),
+    HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.state_of_charge",
         translation_key="state_of_charge",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].power_flow.pv_to_load",
@@ -777,13 +784,13 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         conversion_factor=0.1,
         suggested_display_precision=1,
     ),
-
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.state_of_health",
         translation_key="state_of_health",
         native_unit_of_measurement=PERCENTAGE,
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage",
@@ -793,6 +800,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
         suggested_display_precision=1,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.internal_charge_mode",
@@ -801,6 +809,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.internal_discharge_mode",
@@ -809,6 +818,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.cell_voltage_high",
@@ -818,6 +828,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
         suggested_display_precision=1,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.cell_voltage_low",
@@ -827,6 +838,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
         suggested_display_precision=1,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.temp_high_charge",
@@ -835,6 +847,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.temp_low_charge",
@@ -843,6 +856,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.temp_high_module",
@@ -851,6 +865,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.temp_low_module",
@@ -859,6 +874,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.energy_charged",
@@ -868,6 +884,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
         suggested_display_precision=1,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.energy_discharged",
@@ -877,6 +894,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.TOTAL_INCREASING,
         conversion_factor=0.1,
         suggested_display_precision=1,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_charge_high",
@@ -886,6 +904,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.001,
         suggested_display_precision=3,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_charge_low",
@@ -895,6 +914,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.001,
         suggested_display_precision=3,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_module_high",
@@ -904,6 +924,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.001,
         suggested_display_precision=3,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_module_low",
@@ -913,6 +934,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.001,
         suggested_display_precision=3,
+        is_bms_device=True,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].grid.param.frequency",
@@ -1166,7 +1188,6 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         conversion_factor=0.1,
         suggested_display_precision=1,
     ),
-
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.fan_speed_1",
         translation_key="inverter_fan_speed",
@@ -1312,11 +1333,16 @@ async def async_setup_entry(
 
     if hybrid_inverters:
         for description in HOYMILES_ENERGY_STORAGE_SENSORS:
+            # Use specialised entity class for the EMS working mode sensor
+            if description.translation_key == "ems_mode":
+                entity_class = HoymilesEmsModeSensorEntity
+            else:
+                entity_class = HoymilesEnergyStorageSensorEntity
             sensor_entities = get_sensors_for_hybrid_inverter_description(
                 config_entry,
                 description,
                 energy_storage_data_coordinator,
-                HoymilesEnergyStorageSensorEntity,
+                entity_class,
                 dtu_serial_number,
                 hybrid_inverters,
             )
@@ -1418,7 +1444,7 @@ def get_sensors_for_hybrid_inverter_description(
             # Grid, load, and power flow are DTU-level or shared infrastructure, so we skip them for slaves.
             if index > 0:
                 is_allowed_slave_sensor = False
-                for allowed_sub in (".pv_panels", ".battery_management", ".inverter."):
+                for allowed_sub in (".pv_panels", ".battery_management", ".inverter.", ".ems_mode"):
                     if allowed_sub in description.key:
                         is_allowed_slave_sensor = True
                         break
@@ -1443,32 +1469,29 @@ def get_sensors_for_hybrid_inverter_description(
                     sensor = class_name(config_entry, updated_description, coordinator)
                     sensors.append(sensor)
             elif "<phase_count>" in description.key:
-                # Dynamic Phase Filtering (1-Phase vs 3-Phase Support)
-                # Check phase B voltage from coordinator data to dynamically set phase count
+                # Read phase configuration topology directly from coordinator static cache
                 is_three_phase = False
-                if (
-                    coordinator.data
-                    and len(coordinator.data) > index
-                    and hasattr(coordinator.data[index], "grid")
-                    and hasattr(coordinator.data[index].grid, "phases")
-                    and len(coordinator.data[index].grid.phases) >= 3
-                ):
-                    phase_b = coordinator.data[index].grid.phases[1]
-                    if getattr(phase_b, "voltage", 0) > 0:
-                        is_three_phase = True
+                if hasattr(coordinator, "three_phase_inverters_set"):
+                    is_three_phase = str(inverter["inverter_serial_number"]) in coordinator.three_phase_inverters_set
 
-                phases_to_create = [0] if not is_three_phase else [0, 1, 2]
+                if is_three_phase:
+                    phases_to_create = [0, 1, 2]
+                else:
+                    # Single-phase: create only index 0, but without a phase label
+                    phases_to_create = [0]
 
                 for phase_index in phases_to_create:
                     new_phase_index_key = new_key.replace(
                         "<phase_count>", str(phase_index)
                     )
+                    # For 3-phase: set phase label ("A"/"B"/"C"). For 1-phase: leave phase=None.
+                    phase_label = ["A", "B", "C"][phase_index] if is_three_phase else None
                     updated_description = dataclasses.replace(
                         description,
                         key=new_phase_index_key,
                         serial_number=inverter["inverter_serial_number"],
                         model_name=inverter["model_name"],
-                        phase=["A", "B", "C"][phase_index],
+                        phase=phase_label,
                     )
                     sensor = class_name(config_entry, updated_description, coordinator)
                     sensors.append(sensor)
@@ -1495,6 +1518,8 @@ def get_sensors_for_hybrid_inverter_description(
 
 class HoymilesDataSensorEntity(HoymilesCoordinatorEntity, RestoreSensor):
     """Represents a sensor entity for Hoymiles data."""
+
+    _attr_has_entity_name = True  # Aktywacja nowoczesnego standardu nazw HA
 
     def __init__(
         self,
@@ -1632,6 +1657,8 @@ class HoymilesDataSensorEntity(HoymilesCoordinatorEntity, RestoreSensor):
 class HoymilesEnergySensorEntity(HoymilesDataSensorEntity, RestoreSensor):
     """Represents an energy sensor entity for Hoymiles data."""
 
+    _attr_has_entity_name = True
+
     def __init__(
         self,
         config_entry: ConfigEntry,
@@ -1691,6 +1718,8 @@ class HoymilesDiagnosticSensorEntity(
     HoymilesCoordinatorEntity, RestoreSensor, SensorEntity
 ):
     """Represents a diagnostic sensor entity for Hoymiles data."""
+
+    _attr_has_entity_name = True
 
     def __init__(self, config_entry, description, coordinator):
         """Initialize the HoymilesSensorEntity."""
@@ -1765,6 +1794,8 @@ class HoymilesDiagnosticSensorEntity(
 class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor):
     """Represents a sensor entity for Hoymiles data."""
 
+    _attr_has_entity_name = True  # Nowoczesna architektura nazw HA
+
     def __init__(
         self,
         config_entry: ConfigEntry,
@@ -1784,28 +1815,45 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
         self._last_successful_update = None
         self._last_update_state = None
 
-        # Custom Master-Slave naming support
-        # We need to find which inverter index is used to determine if it is a Slave.
-        # description.key is in format: "[index].production.energy_to_load"
-        if description.key.startswith("[") and "]" in description.key:
-            try:
-                inv_idx = int(description.key.split("[")[1].split("]")[0])
-                if inv_idx > 0:
-                    # It's a Slave inverter (S1 for index 1, S2 for index 2, etc.)
-                    prefix = f"S{inv_idx} "
-                    if self._attr_name:
-                        self._attr_name = f"{prefix}{self._attr_name}"
-                    # Update translation placeholders so HA UI constructs the name with prefix if translation key is used
-                    self._attr_translation_placeholders = self._attr_translation_placeholders or {}
-                    if "name" in self._attr_translation_placeholders:
-                        self._attr_translation_placeholders["name"] = f"{prefix}{self._attr_translation_placeholders['name']}"
-            except Exception:
-                pass
+        # USUNIĘTO STARY KOD PREFIKSOWANIA NAZW ("S1 ", "S2 ") POPRZEZ FRONTEND PLACEHOLDERS.
+        # Od teraz integracja polega w 100% na translation_key i mapowaniu w device_info.
 
         if description.suggested_display_precision is not None:
             self._attr_suggested_display_precision = description.suggested_display_precision
 
         self.update_state_value()
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Dynamicznie rozdziela encje do urządzania Inwerter lub Bateria zachowując relacje klastra."""
+        path = self._attribute_name
+        inv_idx = 0
+        if path.startswith("[") and "]" in path:
+            try:
+                inv_idx = int(path.split("[")[1].split("]")[0])
+            except (ValueError, IndexError):
+                pass
+
+        role_suffix = "M" if inv_idx == 0 else f"S{inv_idx}"
+        serial = getattr(self.entity_description, "serial_number", None) or "cluster"
+
+        # Separacja architektoniczna: Jeśli opis encji wskazuje na BMS akumulatora, budujemy osobny kafelek urządzenia
+        if getattr(self.entity_description, "is_bms_device", False):
+            return DeviceInfo(
+                identifiers={(DOMAIN, f"battery_{serial}")},
+                name=f"Battery {role_suffix}",
+                manufacturer="Hoymiles",
+                model="Integrated BMS Storage Pack",
+                via_device=(DOMAIN, f"inverter_{serial}"),  # Hierarchiczne powiązanie z inwerterem nadrzędnym
+            )
+
+        # Domyślne przypisanie do fizycznej jednostki falownika hybrydowego
+        return DeviceInfo(
+            identifiers={(DOMAIN, f"inverter_{serial}")},
+            name=f"Inverter {role_suffix}",
+            manufacturer="Hoymiles",
+            model="HYS Hybrid Inverter",
+        )
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -1844,8 +1892,6 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
     @property
     def extra_state_attributes(self):
         """Return the state attributes."""
-        # Traceability Attribute: Expose binary/JSON extraction path
-        # Map [<inverter_count>] index to m/s1/s2 to represent real path
         path = self._attribute_name
         if path.startswith("[") and "]" in path:
             try:
@@ -1883,8 +1929,8 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
                     try:
                         obj = obj[index]
                     except (IndexError, TypeError):
-                        logging.error(
-                            "Index %d out of range for object: %s", index, obj
+                        logging.debug(
+                            "Index %d out of range for object: %s (normal when loading/offline)", index, obj
                         )
                         return None
                 else:
@@ -1929,3 +1975,263 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
             state = await self.async_get_last_sensor_data()
             if state:
                 self.last_known_value = state.native_value
+
+
+# Mapping of numeric EMS/BMS working mode values to human-readable labels
+EMS_MODE_LABELS: dict[int, str] = {
+    1: "Self-Consumption Mode",
+    2: "Economy Mode",
+    3: "Backup Mode",
+    4: "Off-Grid Mode",
+    5: "Force Charge Mode",
+    6: "Force Discharge Mode",
+    7: "Peak Shaving Mode",
+    8: "Time of Use Mode",
+}
+
+
+class HoymilesEmsModeSensorEntity(HoymilesEnergyStorageSensorEntity):
+    """Sensor entity that displays the EMS working mode as a human-readable label."""
+
+    @property
+    def native_value(self):
+        """Return the working mode as a descriptive label with numeric code."""
+        raw = super().native_value
+        if raw is None:
+            return None
+        try:
+            mode_int = int(raw)
+        except (TypeError, ValueError):
+            return str(raw)
+        label = EMS_MODE_LABELS.get(mode_int, f"Unknown mode")
+        return f"{label} [{mode_int}]"
+
+    @property
+    def extra_state_attributes(self):
+        """Return enriched attributes with battery and inverter state context."""
+        attrs = dict(super().extra_state_attributes)
+
+        key = self._attribute_name
+        inv_idx = 0
+        if key.startswith("[") and "]" in key:
+            try:
+                inv_idx = int(key.split("[")[1].split("]")[0])
+            except (ValueError, IndexError):
+                pass
+
+        data = None
+        if (
+            self.coordinator is not None
+            and hasattr(self.coordinator, "data")
+            and self.coordinator.data is not None
+        ):
+            try:
+                data = self.coordinator.data[inv_idx]
+            except (IndexError, TypeError):
+                data = None
+
+        if data is None:
+            return attrs
+
+        try:
+            raw_mode = int(data.ems_mode) if hasattr(data, "ems_mode") else None
+            if raw_mode is not None:
+                attrs["mode_code"] = raw_mode
+                attrs["mode_name"] = EMS_MODE_LABELS.get(raw_mode, f"Unknown [{raw_mode}]")
+        except (TypeError, ValueError):
+            pass
+
+        bms = getattr(data, "battery_management", None)
+        if bms is not None:
+            soc = getattr(bms, "state_of_charge", None)
+            if soc is not None:
+                attrs["battery_soc_pct"] = round(soc, 1)
+
+            soh = getattr(bms, "state_of_health", None)
+            if soh is not None:
+                attrs["battery_soh_pct"] = round(soh, 1)
+
+            power = getattr(bms, "power", None)
+            if power is not None:
+                attrs["battery_power_w"] = power
+                attrs["battery_direction"] = (
+                    "charging" if power > 0 else ("discharging" if power < 0 else "idle")
+                )
+
+            icm = getattr(bms, "internal_charge_mode", None)
+            if icm is not None:
+                attrs["internal_charge_mode"] = icm
+
+            idm = getattr(bms, "internal_discharge_mode", None)
+            if idm is not None:
+                attrs["internal_discharge_mode"] = idm
+
+        pflow = getattr(data, "power_flow", None)
+        if pflow is not None:
+            for field, label in (
+                ("pv_to_load", "pv_to_load_w"),
+                ("pv_to_battery", "pv_to_battery_w"),
+                ("pv_to_grid", "pv_to_grid_w"),
+                ("battery_to_load", "battery_to_load_w"),
+                ("battery_to_grid", "battery_to_grid_w"),
+                ("grid_to_load", "grid_to_load_w"),
+            ):
+                val = getattr(pflow, field, None)
+                if val is not None and val != 0:
+                    attrs[label] = val
+
+        if (
+            self.coordinator is not None
+            and hasattr(self.coordinator, "ems_configs")
+            and self.coordinator.ems_configs
+        ):
+            inv_sn_str = str(self.entity_description.serial_number) if hasattr(self.entity_description, "serial_number") else None
+            if inv_sn_str and inv_sn_str in self.coordinator.ems_configs:
+                cfg = self.coordinator.ems_configs[inv_sn_str]
+                
+                def decode_time(val):
+                    if not val:
+                        return "00:00-00:00"
+                    try:
+                        v = int(val)
+                    except (ValueError, TypeError):
+                        return "00:00-00:00"
+                    fh = (v >> 24) & 0xFF
+                    fm = (v >> 16) & 0xFF
+                    th = (v >> 8) & 0xFF
+                    tm = v & 0xFF
+                    return f"{fh:02d}:{fm:02d}-{th:02d}:{tm:02d}"
+
+                def decode_date(val):
+                    if not val:
+                        return "01.01-12.31"
+                    try:
+                        v = int(val)
+                    except (ValueError, TypeError):
+                        return "01.01-12.31"
+                    fm = (v >> 24) & 0xFF
+                    fd = (v >> 16) & 0xFF
+                    tm = (v >> 8) & 0xFF
+                    td = v & 0xFF
+                    return f"{fm:02d}.{fd:02d}-{tm:02d}.{td:02d}"
+
+                def decode_days(val):
+                    if not val:
+                        return ""
+                    try:
+                        v = int(val)
+                    except (ValueError, TypeError):
+                        return ""
+                    days = []
+                    if v & 1: days.append("1")
+                    if v & 2: days.append("2")
+                    if v & 4: days.append("3")
+                    if v & 8: days.append("4")
+                    if v & 16: days.append("5")
+                    if v & 32: days.append("6")
+                    if v & 64: days.append("7")
+                    return ",".join(days)
+
+                configs = {}
+
+                selfu = cfg.get("selfu", {})
+                configs["self_use"] = {
+                    "bms_mode": "self_use",
+                    "rev_soc": selfu.get("rev_soc", 0),
+                }
+
+                date_cfg = cfg.get("date", {})
+                time_settings_list = []
+                for ts in date_cfg.get("ts", []):
+                    dr_str = decode_date(ts.get("dr", 0))
+                    w1 = ts.get("w1", {})
+                    w2 = ts.get("w2", {})
+                    
+                    ranges = []
+                    for w in [w1, w2]:
+                        if not w:
+                            continue
+                        days_str = decode_days(w.get("wr", 0))
+                        peak_tr = decode_time(w.get("peak_time", 0))
+                        valley_tr = decode_time(w.get("valley_time", 0))
+                        peak_in = w.get("peak_in", 0)
+                        peak_out = w.get("peak_out", 0)
+                        valley_in = w.get("valley_in", 0)
+                        valley_out = w.get("valley_out", 0)
+                        
+                        结构 = f"{days_str}={peak_tr}-{peak_in}-{peak_out},{valley_tr}-{valley_in}-{valley_out}"
+                        ranges.append(结构)
+                    
+                    time_settings_list.append(f"{dr_str}:{';'.join(ranges)}")
+                
+                configs["economic"] = {
+                    "bms_mode": "economic",
+                    "rev_soc": date_cfg.get("rev_soc", 0),
+                    "time_settings": "||".join(time_settings_list) if time_settings_list else "",
+                }
+
+                back = cfg.get("back", {})
+                configs["backup_power"] = {
+                    "bms_mode": "backup_power",
+                    "rev_soc": back.get("rev_soc", 0),
+                }
+
+                configs["pure_off_grid"] = {
+                    "bms_mode": "pure_off_grid",
+                }
+
+                chrg_m = cfg.get("chrg_m", {})
+                configs["forced_charging"] = {
+                    "bms_mode": "forced_charging",
+                    "rev_soc": chrg_m.get("rev_soc", 0),
+                    "max_power": round(chrg_m.get("max_p", 0) / 10),
+                }
+
+                dchg_m = cfg.get("dchg_m", {})
+                configs["forced_discharge"] = {
+                    "bms_mode": "forced_discharge",
+                    "rev_soc": dchg_m.get("rev_soc", 0),
+                    "max_power": round(dchg_m.get("max_p", 0) / 10),
+                }
+
+                peakcut = cfg.get("peakcut", {})
+                configs["peak_shaving"] = {
+                    "bms_mode": "peak_shaving",
+                    "peak_soc": peakcut.get("peakrev_soc", 0),
+                    "peak_meter_power": peakcut.get("peak_meterp", 0),
+                }
+
+                tou_cfg = cfg.get("tou", {})
+                time_periods_list = []
+                for tr in tou_cfg.get("trs", []):
+                    chg_tr = decode_time(tr.get("chg_tr", 0))
+                    dchg_tr = decode_time(tr.get("dchg_tr", 0))
+                    chg_p = tr.get("chg_p", 0)
+                    dchg_p = tr.get("dchg_p", 0)
+                    min_soc = tr.get("min_soc", 0)
+                    max_soc = tr.get("max_soc", 0)
+                    time_periods_list.append(f"{chg_tr}-{chg_p}-{max_soc}|{dchg_tr}-{dchg_p}-{min_soc}")
+
+                configs["time_of_use"] = {
+                    "bms_mode": "time_of_use",
+                    "rev_soc": tou_cfg.get("rev_soc", 0),
+                    "time_periods": "||".join(time_periods_list) if time_periods_list else "",
+                }
+
+                for mode_key, mode_cfg in configs.items():
+                    attrs[f"{mode_key}_configuration"] = mode_cfg
+
+                active_mode_code = cfg.get("mode", 1)
+                active_mode_name = {
+                    1: "self_use",
+                    2: "economic",
+                    3: "backup_power",
+                    4: "pure_off_grid",
+                    5: "forced_charging",
+                    6: "forced_discharge",
+                    7: "peak_shaving",
+                    8: "time_of_use",
+                }.get(active_mode_code, "self_use")
+                attrs["current_mode_configuration"] = configs.get(active_mode_name)
+
+        return attrs

@@ -148,6 +148,9 @@ class HoymilesEnergyStorageUpdateCoordinator(HoymilesDataUpdateCoordinator):
     ) -> None:
         self._dtu_serial_number = dtu_serial_number
         self._inverters = inverters
+        self.three_phase_inverters_set = set()
+        self.ems_configs = {}  # Cache for detailed EMS config dicts
+        self._last_mode_codes = {}  # Keep track of last mode codes to detect changes
         super().__init__(hass, dtu, config_entry, update_interval)
 
     async def _async_update_data(self):
@@ -155,6 +158,7 @@ class HoymilesEnergyStorageUpdateCoordinator(HoymilesDataUpdateCoordinator):
         _LOGGER.debug("Hoymiles energy storage coordinator update")
 
         from hoymiles_wifi.hys import HysClient
+        from google.protobuf.json_format import MessageToDict
         hys = HysClient(self._dtu)
         responses = []
 
@@ -164,23 +168,54 @@ class HoymilesEnergyStorageUpdateCoordinator(HoymilesDataUpdateCoordinator):
             # - Master (index 0) has addr=1 -> number=1 (represented as slave_index = 1)
             # - Slave S1 (index 1) has addr=2 -> number=2
             slave_index = idx + 1
+            inv_sn = int(inverter["inverter_serial_number"])
+            inv_sn_str = str(inv_sn)
             
             _LOGGER.debug(
                 "Fetching telemetry for hybrid inverter %s (index: %d, routing number: %d)",
-                inverter["inverter_serial_number"],
+                inv_sn,
                 idx,
                 slave_index,
             )
             storage_data = await hys.async_get_hys_telemetry(
                 dtu_sn=int(self._dtu_serial_number),
-                inverter_sn=int(inverter["inverter_serial_number"]),
+                inverter_sn=inv_sn,
                 slave_index=slave_index,
             )
             if storage_data is not None:
                 responses.append(storage_data)
+                # Static topology phase verification:
+                if hasattr(storage_data, "inv") and hasattr(storage_data.inv, "phase") and len(storage_data.inv.phase) >= 3:
+                    self.three_phase_inverters_set.add(inv_sn_str.lower())
+
+                # Fetch detailed EMS configuration only for Master inverter (idx == 0)
+                if idx == 0:
+                    current_mode_code = getattr(storage_data, "ems_mode", None)
+                    last_mode_code = self._last_mode_codes.get(inv_sn_str)
+                    
+                    # Fetch if not yet fetched, or if the mode has changed
+                    if inv_sn_str not in self.ems_configs or current_mode_code != last_mode_code:
+                        _LOGGER.debug("Fetching detailed EMS config for Master inverter %s", inv_sn)
+                        try:
+                            ems_config_pb = await self._dtu.async_get_energy_storage_working_mode(
+                                dtu_serial_number=int(self._dtu_serial_number),
+                                inverter_serial_number=inv_sn,
+                            )
+                            if ems_config_pb is not None:
+                                # Convert protobuf msg to dictionary
+                                self.ems_configs[inv_sn_str] = MessageToDict(
+                                    ems_config_pb,
+                                    preserving_proto_field_name=True,
+                                    always_print_fields_with_no_presence=True,
+                                )
+                                if current_mode_code is not None:
+                                    self._last_mode_codes[inv_sn_str] = current_mode_code
+                        except Exception as e:
+                            _LOGGER.warning("Failed to fetch EMS config for inverter %s: %s", inv_sn, e)
 
         if not responses:
             _LOGGER.debug(
                 "Unable to retrieve energy storage data. Inverter might be offline."
             )
         return responses
+

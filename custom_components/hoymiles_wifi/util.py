@@ -115,6 +115,11 @@ async def async_get_config_entry_data_for_host(
                     {
                         "inverter_serial_number": inverter.serial_number,
                         "model_name": inverter.model_name,
+                        "sw_m_ver": inverter.sw_m_ver or "Unknown",
+                        "sw_s_ver": inverter.sw_s_ver or "Unknown",
+                        "sw_sys_ver": inverter.sw_sys_ver or "Unknown",
+                        "pv_num": inverter.pv_num or 0,
+                        "bms_cap": inverter.bms_cap or 0,
                     }
                     for inverter in registry.inverters
                 ]

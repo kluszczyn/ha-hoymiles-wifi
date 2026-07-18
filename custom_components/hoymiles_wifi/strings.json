@@ -2,20 +2,20 @@
   "config": {
     "step": {
       "user": {
-        "title": "Hoymiles DTU connection",
+        "title": "Hoymiles HYS integration",
         "description": "If you need help with the configuration have a look here: https://github.com/suaveolent/ha-hoymiles-wifi",
         "data": {
           "host": "[%key:common::config_flow::data::host%]",
-          "update_interval": "Update Interval (seconds)",
+          "update_interval": "Update interval (seconds)",
           "timeout": "Timeout (seconds)"
         }
       },
       "reconfigure": {
-        "title": "Hoymiles DTU connection",
+        "title": "Hoymiles HYS integration",
         "description": "If you need help with the configuration have a look here: https://github.com/suaveolent/ha-hoymiles-wifi",
         "data": {
           "host": "[%key:common::config_flow::data::host%]",
-          "update_interval": "Update Interval (seconds)",
+          "update_interval": "Update interval (seconds)",
           "timeout": "Timeout (seconds)"
         }
       }
@@ -30,7 +30,7 @@
   "entity": {
     "binary_sensor": {
       "dtu": {
-        "name": "DTU"
+        "name": "DTU online"
       }
     },
     "number": {
@@ -40,7 +40,7 @@
     },
     "sensor": {
       "ac_active_power": {
-        "name": "AC power"
+        "name": "AC active power"
       },
       "ac_daily_energy": {
         "name": "AC daily energy"
@@ -48,23 +48,104 @@
       "ac_reactive_power": {
         "name": "AC reactive power"
       },
+      "ac_current": {
+        "name": "AC current"
+      },
       "grid_voltage": {
         "name": "Grid voltage"
-      },
-      "ac_current": {
-        "name": "AC current" 
       },
       "grid_frequency": {
         "name": "Grid frequency"
       },
+      "grid_status": {
+        "name": "Grid status"
+      },
+      "grid_power_factor_deviation": {
+        "name": "Power factor deviation"
+      },
       "inverter_power_factor": {
         "name": "Power factor"
+      },
+      "inverter_warning_number": {
+        "name": "Warning number"
+      },
+      "ems_mode": {
+        "name": "Working mode"
+      },
+      "wifi_ssid": {
+        "name": "Wi-Fi SSID"
+      },
+      "dtu_ap_ssid": {
+        "name": "AP SSID"
+      },
+      "meter_kind": {
+        "name": "Meter kind"
+      },
+      "mac_address": {
+        "name": "MAC address"
+      },
+      "ip_address": {
+        "name": "IP address"
+      },
+      "dtu_sw_version": {
+        "name": "DTU SW version"
+      },
+      "dtu_hw_version": {
+        "name": "DTU HW version"
+      },
+      "pv_sw_version": {
+        "name": "Inverter SW version"
+      },
+      "pv_hw_version": {
+        "name": "Inverter HW version"
+      },
+      "signal_strength": {
+        "name": "Signal strength"
+      },
+      "phase_total_power": {
+        "name": "Phase total power"
+      },
+      "power_factor_total": {
+        "name": "Power factor total"
+      },
+      "energy_total_power": {
+        "name": "Energy total power"
+      },
+      "energy_total_consumed": {
+        "name": "Energy total consumed"
+      },
+      "load_status": {
+        "name": "Load status"
+      },
+      "load_frequency": {
+        "name": "Load frequency"
+      },
+      "inverter_status": {
+        "name": "Status"
+      },
+      "inverter_frequency": {
+        "name": "Frequency"
       },
       "inverter_temperature": {
         "name": "Temperature"
       },
-      "inverter_warning_number": {
-        "name": "Warning number"
+      "inverter_internal_temperature": {
+        "name": "Internal temperature"
+      },
+      "inverter_isolation_resistance": {
+        "name": "Isolation resistance"
+      },
+      "inverter_leakage_current": {
+        "name": "Leakage current"
+      },
+      "inverter_drm_signal": {
+        "name": "DRM status"
+      },
+      "inverter_fan_speed": {
+        "name": "Fan speed 1"
+      },
+      "inverter_fan_speed_2": {
+        "name": "Fan speed 2"
       },
       "port_dc_voltage": {
         "name": "Port {port_number} DC voltage"
@@ -84,35 +165,17 @@
       "port_error_code": {
         "name": "Port {port_number} error code"
       },
-      "wifi_ssid": {
-        "name": "Wi-Fi SSID"
+      "pv_panel_voltage": {
+        "name": "PV panel {port_number} voltage"
       },
-      "meter_kind": {
-        "name": "Meter kind"
+      "pv_panel_current": {
+        "name": "PV panel {port_number} current"
       },
-      "mac_address": {
-        "name": "MAC address"
+      "pv_panel_power": {
+        "name": "PV panel {port_number} power"
       },
-      "ip_address": {
-        "name": "IP address"
-      },
-      "dtu_ap_ssid": {
-        "name": "AP SSID"
-      },
-      "dtu_sw_version": {
-        "name": "SW version"
-      },
-      "dtu_hw_version": {
-        "name": "HW version"
-      },
-      "pv_sw_version": {
-        "name": "SW version"
-      },
-      "pv_hw_version": {
-        "name": "HW version"
-      },
-      "signal_strength": {
-        "name": "Signal strength"
+      "pv_panel_energy": {
+        "name": "PV panel {port_number} energy"
       },
       "voltage_phase_A": {
         "name": "Voltage phase A"
@@ -132,9 +195,6 @@
       "voltage_line_CA": {
         "name": "Voltage line CA"
       },
-      "phase_total_power": {
-        "name": "Phase total power"
-      },
       "phase_A_power": {
         "name": "Phase A power"
       },
@@ -143,33 +203,6 @@
       },
       "phase_C_power": {
         "name": "Phase C power"
-      },
-      "power_factor_total": {
-        "name": "Power factor total"
-      },
-      "energy_total_power": {
-        "name": "Energy total power"
-      },
-      "energy_phase_A": {
-        "name": "Energy phase A"
-      },
-      "energy_phase_B": {
-        "name": "Energy phase B"
-      },
-      "energy_phase_C": {
-        "name": "Energy phase C"
-      },
-      "energy_total_consumed": {
-        "name": "Energy total consumed"
-      },
-      "energy_phase_A_consumed": {
-        "name": "Energy phase A consumed"
-      },
-      "energy_phase_B_consumed": {
-        "name": "Energy phase B consumed"
-      },
-      "energy_phase_C_consumed": {
-        "name": "Energy phase C consumed"
       },
       "current_phase_A": {
         "name": "Current phase A"
@@ -188,6 +221,102 @@
       },
       "power_factor_phase_C": {
         "name": "Power factor phase C"
+            },
+      "energy_phase_A": {
+        "name": "Energy phase A"
+      },
+      "energy_phase_B": {
+        "name": "Energy phase B"
+      },
+      "energy_phase_C": {
+        "name": "Energy phase C"
+      },
+      "energy_phase_A_consumed": {
+        "name": "Energy phase A consumed"
+      },
+      "energy_phase_B_consumed": {
+        "name": "Energy phase B consumed"
+      },
+      "energy_phase_C_consumed": {
+        "name": "Energy phase C consumed"
+      },
+      "grid_voltage_phase": {
+        "name": "Grid voltage {phase}"
+      },
+      "grid_current_phase": {
+        "name": "Grid current {phase}"
+      },
+      "grid_reactive_power_phase": {
+        "name": "Grid reactive power {phase}"
+      },
+      "grid_active_power_phase": {
+        "name": "Grid active power {phase}"
+      },
+      "grid_power_factor_phase": {
+        "name": "Grid power factor {phase}"
+      },
+      "grid_energy_exported_phase": {
+        "name": "Grid energy exported {phase}"
+      },
+      "grid_energy_consumed_phase": {
+        "name": "Grid energy consumed {phase}"
+      },
+      "inverter_voltage_phase": {
+        "name": "Voltage {phase}"
+      },
+      "inverter_current_phase": {
+        "name": "Current {phase}"
+      },
+      "inverter_active_power_phase": {
+        "name": "Active power {phase}"
+      },
+      "inverter_reactive_power_phase": {
+        "name": "Reactive power {phase}"
+      },
+      "inverter_ac_dc_injection_current_phase": {
+        "name": "AC DC-injection current {phase}"
+      },
+      "inverter_ac_dc_injection_voltage_phase": {
+        "name": "AC DC-injection voltage {phase}"
+      },
+      "inverter_eps_voltage_phase": {
+        "name": "EPS voltage {phase}"
+      },
+      "inverter_eps_current_phase": {
+        "name": "EPS current {phase}"
+      },
+      "inverter_eps_power_phase": {
+        "name": "EPS power {phase}"
+      },
+      "load_voltage_phase": {
+        "name": "Load voltage {phase}"
+      },
+      "load_active_power_phase": {
+        "name": "Load active power {phase}"
+      },
+      "load_energy_consumed_phase": {
+        "name": "Load energy consumed {phase}"
+      },
+      "pv_inverter_voltage_phase": {
+        "name": "PV-inverter voltage {phase}"
+      },
+      "pv_inverter_current_phase": {
+        "name": "PV-inverter current {phase}"
+      },
+      "pv_inverter_active_power_phase": {
+        "name": "PV-inverter active power {phase}"
+      },
+      "pv_inverter_reactive_power_phase": {
+        "name": "PV-inverter reactive power {phase}"
+      },
+      "pv_inverter_energy_phase": {
+        "name": "PV-inverter energy {phase}"
+      },
+      "pv_inverter_status": {
+        "name": "PV-inverter status"
+      },
+      "pv_inverter_frequency": {
+        "name": "PV-inverter frequency"
       },
       "energy_to_load": {
         "name": "Energy to load"
@@ -207,17 +336,23 @@
       "energy_from_grid": {
         "name": "Energy from grid"
       },
-      "pv_panel_voltage": {
-        "name": "PV panel {port_number} voltage"
+      "pv_to_load": {
+        "name": "PV to load"
       },
-      "pv_panel_current": {
-        "name": "PV panel {port_number} current"
+      "battery_to_load": {
+        "name": "Battery to load"
       },
-      "pv_panel_power": {
-        "name": "PV panel {port_number} power"
+      "grid_to_load": {
+        "name": "Grid to load"
       },
-      "pv_panel_energy": {
-        "name": "PV panel {port_number} energy"
+      "pv_to_battery": {
+        "name": "PV to battery"
+      },
+      "pv_to_grid": {
+        "name": "PV to grid"
+      },
+      "battery_to_grid": {
+        "name": "Battery to grid"
       },
       "state_of_charge": {
         "name": "State of charge"
@@ -226,13 +361,13 @@
         "name": "State of health"
       },
       "battery_voltage": {
-        "name": "Battery voltage"
+        "name": "BMS voltage"
       },
       "internal_charge_mode": {
-        "name": "Internal charge mode"
+        "name": "Charge current limit"
       },
       "internal_discharge_mode": {
-        "name": "Internal discharge mode"
+        "name": "Discharge current limit"
       },
       "cell_voltage_high": {
         "name": "Cell voltage high"
@@ -241,16 +376,16 @@
         "name": "Cell voltage low"
       },
       "temp_high_charge": {
-        "name": "Temperature high (charge)"
+        "name": "Max charge temperature"
       },
       "temp_low_charge": {
-        "name": "Temperature low (charge)"
+        "name": "Min charge temperature"
       },
       "temp_high_module": {
-        "name": "Module temperature high"
+        "name": "Max module temperature"
       },
       "temp_low_module": {
-        "name": "Module temperature low"
+        "name": "Min module temperature"
       },
       "energy_charged": {
         "name": "Energy charged"
@@ -259,148 +394,16 @@
         "name": "Energy discharged"
       },
       "voltage_charge_high": {
-        "name": "Voltage charge high"
+        "name": "Max charge voltage"
       },
       "voltage_charge_low": {
-        "name": "Voltage charge low"
+        "name": "Min charge voltage"
       },
       "voltage_module_high": {
-        "name": "Module voltage high"
+        "name": "Max module voltage"
       },
       "voltage_module_low": {
-        "name": "Module voltage low"
-      },
-      "grid_status": {
-        "name": "Grid status"
-      },
-      "grid_power_factor_deviation": {
-        "name": "Power factor deviation"
-      },
-      "grid_voltage_phase": {
-        "name": "Grid voltage phase {phase}"
-      },
-      "grid_current_phase": {
-        "name": "Grid current phase {phase}"
-      },
-      "grid_reactive_power_phase": {
-        "name": "Grid reactive power phase {phase}"
-      },
-      "grid_active_power_phase": {
-        "name": "Grid active power phase {phase}"
-      },
-      "grid_power_factor_phase": {
-        "name": "Grid power factor phase {phase}"
-      },
-      "grid_energy_exported_phase": {
-        "name": "Grid energy exported phase {phase}"
-      },
-      "grid_energy_consumed_phase": {
-        "name": "Grid energy consumed phase {phase}"
-      },
-      "load_status": {
-        "name": "Load status"
-      },
-      "load_frequency": {
-        "name": "Load frequency"
-      },
-      "load_voltage_phase": {
-        "name": "Load voltage phase {phase}"
-      },
-      "load_active_power_phase": {
-        "name": "Load active power phase {phase}"
-      },
-      "load_energy_consumed_phase": {
-        "name": "Load energy consumed phase {phase}"
-      },
-      "inverter_status": {
-        "name": "Inverter status"
-      },
-      "inverter_frequency": {
-        "name": "Inverter frequency"
-      },
-      "inverter_isolation_resistance": {
-        "name": "Inverter isolation resistance"
-      },
-      "inverter_leakage_current": {
-        "name": "Inverter leakage current"
-      },
-      "inverter_drm_signal": {
-        "name": "Inverter DRM signal"
-      },
-      "inverter_temperature_1": {
-        "name": "Inverter temperature 1"
-      },
-      "inverter_temperature_2": {
-        "name": "Inverter temperature 2"
-      },
-      "inverter_temperature_3": {
-        "name": "Inverter temperature 3"
-      },
-      "inverter_voltage_phase": {
-        "name": "Inverter voltage phase {phase}"
-      },
-      "inverter_current_phase": {
-        "name": "Inverter current phase {phase}"
-      },
-      "inverter_active_power_phase": {
-        "name": "Inverter active power phase {phase}"
-      },
-      "inverter_reactive_power_phase": {
-        "name": "Inverter reactive power phase {phase}"
-      },
-      "inverter_ac_dc_injection_current_phase": {
-        "name": "Inverter AC DC-Injection Phase {phase}"
-      },
-      "inverter_ac_dc_injection_voltage_phase": {
-        "name": "Inverter AC DC-Injection Phase {phase}"
-      },
-      "inverter_eps_voltage_phase": {
-        "name": "Inverter EPS voltage phase {phase}"
-      },
-      "inverter_eps_current_phase": {
-        "name": "Inverter EPS current phase {phase}"
-      },
-      "inverter_eps_power_phase": {
-        "name": "Inverter EPS power phase {phase}"
-      },
-      "pv_inverter_status": {
-        "name": "PV-Inverter status"
-      },
-      "pv_inverter_frequency": {
-        "name": "PV-Inverter frequency"
-      },
-      "pv_inverter_voltage_phase": {
-        "name": "PV-Inverter voltage phase {phase}"
-      },
-      "pv_inverter_current_phase": {
-        "name": "PV-Inverter current phase {phase}"
-      },
-      "pv_inverter_active_power_phase": {
-        "name": "PV-Inverter active power phase {phase}"
-      },
-      "pv_inverter_reactive_power_phase": {
-        "name": "PV-Inverter reactive power phase {phase}"
-      },
-      "pv_inverter_energy_phase": {
-        "name": "PV-Inverter energy phase {phase}"
-      },
-      "pv_to_load": {
-        "name": "Power PV to load"
-      },
-      "battery_to_load": {
-        "name": "Power battery to load"
-      },
-      "grid_to_load": {
-        "name": "Power grid to load"
-      },
-      "pv_to_battery": {
-        "name": "Power PV to battery"
-      },
-      "pv_to_grid": {
-        "name": "Power PV to grid"
-      },
-      "battery_to_grid": {
-        "name": "Power battery to grid"
+        "name": "Min module voltage"
       }
     },
     "button": {
@@ -414,7 +417,7 @@
         "name": "Turn on"
       },
       "enable_performance_data_mode": {
-        "name": "Experimental: Enable performance data mode"
+        "name": "Experimental: enable performance data mode"
       }
     }
   },
@@ -435,50 +438,50 @@
   "services": {
     "set_bms_mode": {
       "name": "Set BMS mode",
-      "description": "Set the BMS mode of the connected battery.",
+      "description": "Set the BMS working mode and rules of the connected cluster.",
       "fields": {
         "bms_mode": {
           "name": "BMS mode",
-          "description": "The BMS working mode to set. Possible values are: 'self_use', 'economic', 'backup_power', 'pure_off_grid', 'forced_charging', 'forced_discharge', 'peak_shaving', 'time_of_use'"
+          "description": "The BMS working mode to set. Supported profiles: 'self_use', 'economic', 'backup_power', 'pure_off_grid', 'forced_charging', 'forced_discharge', 'peak_shaving', 'time_of_use'."
         },
         "rev_soc": {
           "name": "Reserved SOC",
-          "description": "The reserved state of charge (SOC) to set (in %)."
+          "description": "The reserved state of charge (SOC) threshold to set (in %)."
         },
         "max_power": {
-          "name": "Max Power",
-          "description": "The maximum charge/discharge power to set (in %)."
+          "name": "Max power",
+          "description": "The maximum charge/discharge power limit to apply (in %)."
         },
         "peak_soc": {
           "name": "Peak SOC",
-          "description": "The peak state of charge (SOC) to set (in %)."
+          "description": "The peak state of charge (SOC) buffer target (in %)."
         },
         "peak_meter_power": {
-          "name": "Peak Meter Power",
-          "description": "The peak meter power to set (in W)."
+          "name": "Peak meter power",
+          "description": "The peak shaving threshold limit to apply to the import line (in W)."
         },
         "time_settings": {
-          "name": "Time Settings",
-          "description": "Configure time-of-use settings."
+          "name": "Time settings",
+          "description": "Configure economic scheduler calendars and boundaries."
         },
         "time_periods": {
-          "name": "Time Periods",
-          "description": "Define time periods for time-of-use mode."
+          "name": "Time periods",
+          "description": "Define charge and discharge clock matrices for the time of use mode."
         }
       }
     }
   },
-  "selector": {
+  "services_options": {
     "bms_mode_type": {
       "options": {
-        "self_use": "Self-Consumption Mode translated",
-        "economic": "Economy Mode",
-        "backup_power": "Backup Mode",
-        "pure_off_grid": "Off-Grid Mode",
-        "forced_charging": "Force Charge Mode",
-        "forced_discharge": "Force Discharge Mode",
-        "peak_shaving": "Peak Shaving Mode",
-        "time_of_use": "Time of Use Mode"
+        "self_use": "Self-consumption mode",
+        "economic": "Economy mode",
+        "backup_power": "Backup mode",
+        "pure_off_grid": "Off-grid mode",
+        "forced_charging": "Force charge mode",
+        "forced_discharge": "Force discharge mode",
+        "peak_shaving": "Peak shaving mode",
+        "time_of_use": "Time of use mode"
       }
     }
   }

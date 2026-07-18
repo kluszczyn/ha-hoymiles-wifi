@@ -277,25 +277,25 @@
         "name": "Power factor deviation"
       },
       "grid_voltage_phase": {
-        "name": "Grid voltage phase {phase}"
+        "name": "Grid voltage{phase}"
       },
       "grid_current_phase": {
-        "name": "Grid current phase {phase}"
+        "name": "Grid current{phase}"
       },
       "grid_reactive_power_phase": {
-        "name": "Grid reactive power phase {phase}"
+        "name": "Grid reactive power{phase}"
       },
       "grid_active_power_phase": {
-        "name": "Grid active power phase {phase}"
+        "name": "Grid active power{phase}"
       },
       "grid_power_factor_phase": {
-        "name": "Grid power factor phase {phase}"
+        "name": "Grid power factor{phase}"
       },
       "grid_energy_exported_phase": {
-        "name": "Grid energy exported phase {phase}"
+        "name": "Grid energy exported{phase}"
       },
       "grid_energy_consumed_phase": {
-        "name": "Grid energy consumed phase {phase}"
+        "name": "Grid energy consumed{phase}"
       },
       "load_status": {
         "name": "Load status"
@@ -303,14 +303,8 @@
       "load_frequency": {
         "name": "Load frequency"
       },
-      "load_voltage_phase": {
-        "name": "Load voltage phase {phase}"
-      },
-      "load_active_power_phase": {
-        "name": "Load active power phase {phase}"
-      },
-      "load_energy_consumed_phase": {
-        "name": "Load energy consumed phase {phase}"
+      "ems_mode": {
+        "name": "Working mode"
       },
       "inverter_status": {
         "name": "Inverter status"
@@ -327,41 +321,53 @@
       "inverter_drm_signal": {
         "name": "Inverter DRM signal"
       },
-      "inverter_temperature_1": {
-        "name": "Inverter temperature 1"
+      "inverter_fan_speed": {
+        "name": "Inverter fan speed 1"
       },
-      "inverter_temperature_2": {
-        "name": "Inverter temperature 2"
+      "inverter_fan_speed_2": {
+        "name": "Inverter fan speed 2"
       },
-      "inverter_temperature_3": {
-        "name": "Inverter temperature 3"
+      "inverter_temperature": {
+        "name": "Inverter temperature"
+      },
+      "inverter_internal_temperature": {
+        "name": "Inverter internal temperature"
       },
       "inverter_voltage_phase": {
-        "name": "Inverter voltage phase {phase}"
+        "name": "Inverter voltage{phase}"
       },
       "inverter_current_phase": {
-        "name": "Inverter current phase {phase}"
+        "name": "Inverter current{phase}"
       },
       "inverter_active_power_phase": {
-        "name": "Inverter active power phase {phase}"
+        "name": "Inverter active power{phase}"
       },
       "inverter_reactive_power_phase": {
-        "name": "Inverter reactive power phase {phase}"
+        "name": "Inverter reactive power{phase}"
       },
       "inverter_ac_dc_injection_current_phase": {
-        "name": "Inverter AC DC-Injection Phase {phase}"
+        "name": "Inverter AC DC-Injection{phase}"
       },
       "inverter_ac_dc_injection_voltage_phase": {
-        "name": "Inverter AC DC-Injection Phase {phase}"
+        "name": "Inverter AC DC-Injection{phase}"
       },
       "inverter_eps_voltage_phase": {
-        "name": "Inverter EPS voltage phase {phase}"
+        "name": "Inverter EPS voltage{phase}"
       },
       "inverter_eps_current_phase": {
-        "name": "Inverter EPS current phase {phase}"
+        "name": "Inverter EPS current{phase}"
       },
       "inverter_eps_power_phase": {
-        "name": "Inverter EPS power phase {phase}"
+        "name": "Inverter EPS power{phase}"
+      },
+      "load_voltage_phase": {
+        "name": "Load voltage{phase}"
+      },
+      "load_active_power_phase": {
+        "name": "Load active power{phase}"
+      },
+      "load_energy_consumed_phase": {
+        "name": "Load energy consumed{phase}"
       },
       "pv_inverter_status": {
         "name": "PV-Inverter status"
@@ -370,19 +376,19 @@
         "name": "PV-Inverter frequency"
       },
       "pv_inverter_voltage_phase": {
-        "name": "PV-Inverter voltage phase {phase}"
+        "name": "PV-Inverter voltage{phase}"
       },
       "pv_inverter_current_phase": {
-        "name": "PV-Inverter current phase {phase}"
+        "name": "PV-Inverter current{phase}"
       },
       "pv_inverter_active_power_phase": {
-        "name": "PV-Inverter active power phase {phase}"
+        "name": "PV-Inverter active power{phase}"
       },
       "pv_inverter_reactive_power_phase": {
-        "name": "PV-Inverter reactive power phase {phase}"
+        "name": "PV-Inverter reactive power{phase}"
       },
       "pv_inverter_energy_phase": {
-        "name": "PV-Inverter energy phase {phase}"
+        "name": "PV-Inverter energy{phase}"
       },
       "pv_to_load": {
         "name": "Power PV to load"
