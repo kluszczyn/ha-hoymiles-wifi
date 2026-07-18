@@ -164,6 +164,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.REACTIVE_POWER,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="sgs_data[<inverter_count>].voltage",
@@ -172,6 +174,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="sgs_data[<inverter_count>].current",
@@ -180,6 +184,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="sgs_data[<inverter_count>].frequency",
@@ -188,6 +194,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="sgs_data[<inverter_count>].power_factor",
@@ -196,6 +204,7 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.POWER_FACTOR,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesSensorEntityDescription(
         key="sgs_data[<inverter_count>].temperature",
@@ -204,10 +213,12 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesSensorEntityDescription(
         key="sgs_data[<inverter_count>].warning_number",
         translation_key="inverter_warning_number",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].active_power",
@@ -224,6 +235,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.REACTIVE_POWER,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].voltage_phase_A",
@@ -232,6 +245,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].voltage_phase_B",
@@ -240,6 +255,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].voltage_phase_C",
@@ -248,6 +265,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].voltage_line_AB",
@@ -256,6 +275,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].voltage_line_BC",
@@ -264,6 +285,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].voltage_line_CA",
@@ -272,6 +295,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].frequency",
@@ -280,6 +305,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].current_phase_A",
@@ -288,6 +315,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].current_phase_B",
@@ -296,6 +325,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].current_phase_C",
@@ -304,6 +335,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].power_factor",
@@ -312,6 +345,7 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.POWER_FACTOR,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].temperature",
@@ -320,10 +354,12 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesSensorEntityDescription(
         key="tgs_data[<inverter_count>].warning_number",
         translation_key="inverter_warning_number",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesSensorEntityDescription(
         key="pv_data[<pv_count>].voltage",
@@ -332,6 +368,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="pv_data[<pv_count>].current",
@@ -340,6 +378,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="pv_data[<pv_count>].power",
@@ -367,6 +407,7 @@ HOYMILES_SENSORS = [
     HoymilesSensorEntityDescription(
         key="pv_data[<pv_count>].error_code",
         translation_key="port_error_code",
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesSensorEntityDescription(
         key="meter_data[<meter_count>].phase_total_power",
@@ -409,6 +450,7 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.POWER_FACTOR,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesSensorEntityDescription(
         key="meter_data[<meter_count>].energy_total_power",
@@ -485,6 +527,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="meter_data[<meter_count>].voltage_phase_B",
@@ -494,6 +538,8 @@ HOYMILES_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
         requires_device_type=DeviceType.THREE_PHASE_METER,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="meter_data[<meter_count>].voltage_phase_C",
@@ -503,6 +549,8 @@ HOYMILES_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
         requires_device_type=DeviceType.THREE_PHASE_METER,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="meter_data[<meter_count>].current_phase_A",
@@ -511,6 +559,8 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="meter_data[<meter_count>].current_phase_B",
@@ -520,6 +570,8 @@ HOYMILES_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
         requires_device_type=DeviceType.THREE_PHASE_METER,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="meter_data[<meter_count>].current_phase_C",
@@ -529,6 +581,8 @@ HOYMILES_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
         requires_device_type=DeviceType.THREE_PHASE_METER,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesSensorEntityDescription(
         key="meter_data[<meter_count>].power_factor_phase_A",
@@ -537,6 +591,7 @@ HOYMILES_SENSORS = [
         device_class=SensorDeviceClass.POWER_FACTOR,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesSensorEntityDescription(
         key="meter_data[<meter_count>].power_factor_phase_B",
@@ -546,6 +601,7 @@ HOYMILES_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
         requires_device_type=DeviceType.THREE_PHASE_METER,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesSensorEntityDescription(
         key="meter_data[<meter_count>].power_factor_phase_C",
@@ -555,6 +611,7 @@ HOYMILES_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
         requires_device_type=DeviceType.THREE_PHASE_METER,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
 ]
 
@@ -758,6 +815,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].pv_panels[<pv_panel_count>].current",
@@ -766,6 +825,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].pv_panels[<pv_panel_count>].power",
@@ -791,6 +852,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage",
@@ -801,6 +863,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         conversion_factor=0.1,
         suggested_display_precision=1,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.internal_charge_mode",
@@ -810,6 +874,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.internal_discharge_mode",
@@ -819,6 +885,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.cell_voltage_high",
@@ -829,6 +897,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         conversion_factor=0.1,
         suggested_display_precision=1,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=True,  # Pozostaje widoczny domyślnie
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.cell_voltage_low",
@@ -839,6 +909,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         conversion_factor=0.1,
         suggested_display_precision=1,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=True,  # Pozostaje widoczny domyślnie
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.temp_high_charge",
@@ -848,6 +920,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.temp_low_charge",
@@ -857,6 +930,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.temp_high_module",
@@ -866,6 +940,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.temp_low_module",
@@ -875,6 +950,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.energy_charged",
@@ -905,6 +981,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         conversion_factor=0.001,
         suggested_display_precision=3,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_charge_low",
@@ -915,6 +993,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         conversion_factor=0.001,
         suggested_display_precision=3,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_module_high",
@@ -925,6 +1005,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         conversion_factor=0.001,
         suggested_display_precision=3,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_module_low",
@@ -935,6 +1017,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         conversion_factor=0.001,
         suggested_display_precision=3,
         is_bms_device=True,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].grid.param.frequency",
@@ -943,6 +1027,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].grid.phases[<phase_count>].voltage",
@@ -951,6 +1037,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].grid.phases[<phase_count>].current",
@@ -959,6 +1047,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].grid.phases[<phase_count>].active_power",
@@ -974,6 +1064,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfReactivePower.VOLT_AMPERE_REACTIVE,
         device_class=SensorDeviceClass.REACTIVE_POWER,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].grid.phases[<phase_count>].power_factor",
@@ -981,6 +1073,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=PERCENTAGE,
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].grid.phases[<phase_count>].energy_frequency",
@@ -1004,6 +1097,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         key="[<inverter_count>].load.param.status",
         translation_key="load_status",
         device_class=SensorDeviceClass.ENUM,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].load.param.frequency",
@@ -1012,6 +1106,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].load.phases[<phase_count>].voltage",
@@ -1020,6 +1116,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].load.phases[<phase_count>].active_power",
@@ -1041,6 +1139,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         key="[<inverter_count>].inverter.param.status",
         translation_key="inverter_status",
         device_class=SensorDeviceClass.ENUM,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.frequency",
@@ -1049,6 +1148,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.isolation_resistance",
@@ -1056,6 +1157,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement="kΩ",
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.leakage_current",
@@ -1063,11 +1165,13 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfElectricCurrent.MILLIAMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.drm_signal",
         translation_key="inverter_drm_signal",
         device_class=SensorDeviceClass.ENUM,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.phases[<phase_count>].voltage",
@@ -1076,6 +1180,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.phases[<phase_count>].current",
@@ -1084,6 +1190,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.phases[<phase_count>].active_power",
@@ -1098,6 +1206,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfReactivePower.VOLT_AMPERE_REACTIVE,
         device_class=SensorDeviceClass.REACTIVE_POWER,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.phases[<phase_count>].dc_current",
@@ -1105,6 +1215,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfElectricCurrent.MILLIAMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.phases[<phase_count>].dc_voltage",
@@ -1112,6 +1224,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfElectricPotential.MILLIVOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.phases[<phase_count>].eps_voltage",
@@ -1120,6 +1234,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.phases[<phase_count>].eps_current",
@@ -1128,6 +1244,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.phases[<phase_count>].eps_power",
@@ -1140,6 +1258,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         key="[<inverter_count>].pv_inverter.param.status",
         translation_key="pv_inverter_status",
         device_class=SensorDeviceClass.ENUM,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].pv_inverter.param.frequency",
@@ -1148,6 +1267,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.FREQUENCY,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].pv_inverter.phases[<phase_count>].voltage",
@@ -1156,6 +1277,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.1,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].pv_inverter.phases[<phase_count>].current",
@@ -1164,6 +1287,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
         conversion_factor=0.01,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].pv_inverter.phases[<phase_count>].active_power",
@@ -1178,6 +1303,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfReactivePower.VOLT_AMPERE_REACTIVE,
         device_class=SensorDeviceClass.REACTIVE_POWER,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].pv_inverter.phases[<phase_count>].energy",
@@ -1194,6 +1321,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement="RPM",
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.fan_speed_2",
@@ -1201,6 +1329,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement="RPM",
         device_class=None,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.temp_inverter",
@@ -1208,6 +1337,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.temp_pv",
@@ -1215,6 +1345,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.temp_internal",
@@ -1222,6 +1353,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
 ]
 
@@ -1815,9 +1947,6 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
         self._last_successful_update = None
         self._last_update_state = None
 
-        # USUNIĘTO STARY KOD PREFIKSOWANIA NAZW ("S1 ", "S2 ") POPRZEZ FRONTEND PLACEHOLDERS.
-        # Od teraz integracja polega w 100% na translation_key i mapowaniu w device_info.
-
         if description.suggested_display_precision is not None:
             self._attr_suggested_display_precision = description.suggested_display_precision
 
@@ -1826,14 +1955,11 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
     @property
     def device_info(self) -> DeviceInfo:
         """Dynamicznie buduje kompletne i bogate metadane urządzenia bezpośrednio na szczeblu encji."""
-        # Bezpieczne wyciągnięcie numerów seryjnych z encji oraz koordynatora
         serial = getattr(self.entity_description, "serial_number", "unknown")
         dtu_serial = getattr(self.coordinator, "dtu_serial_number", "unknown")
         
-        # Pobranie config_entry bezpiecznie poprzez instancję koordynatora
         config_entry = getattr(self.coordinator, "config_entry", None)
         
-        # 1. Parsowanie indeksu inwertera ze ścieżki atrybutu w celu wyznaczenia sufiksu roli (M / S1..9)
         path = self._attribute_name
         inv_idx = 0
         if path.startswith("[") and "]" in path:
@@ -1844,12 +1970,10 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
         
         role_suffix = "M" if inv_idx == 0 else f"S{inv_idx}"
         
-        # 2. Bezpieczne odczytanie danych konfiguracyjnych i metadanych inwertera z config_entry
         inverter_info = {}
         if config_entry and inv_idx < len(config_entry.data.get("hybrid_inverters", [])):
             inverter_info = config_entry.data["hybrid_inverters"][inv_idx]
         
-        # 3. Dynamiczne określenie fazowości na podstawie zbioru synchronizowanego przez koordynator
         is_three_phase = str(serial) in getattr(self.coordinator, "three_phase_inverters_set", set())
         phase_str = "3-phase" if is_three_phase else "1-phase"
         
@@ -1860,24 +1984,21 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
         bms_cap = inverter_info.get("bms_cap", 0)
         bms_cap_val = f"{bms_cap * 0.1:.1f} kWh" if bms_cap else "None"
         
-        # Budowanie sformatowanych ciągów dla wersji oprogramowania i diagnostyki sprzętowej
         sw_version_str = f"Power: {sw_m_ver} | Safety: {sw_s_ver} | System: {sw_sys_ver}"
         hw_version_str = f"{phase_str} | {pv_num} PV strings | Battery capacity: {bms_cap_val}"
         model_name = inverter_info.get("model_name", "HYS Hybrid Inverter")
 
-        # Przypadek A: Encja należy do autonomicznego, wydzielonego magazynu energii (BMS)
         if getattr(self.entity_description, "is_bms_device", False):
             return DeviceInfo(
                 identifiers={(DOMAIN, f"battery_{serial}")},
                 name=f"Battery {role_suffix}",
                 manufacturer="Hoymiles",
                 model=f"Integrated BMS Storage Pack ({phase_str})",
-                via_device=(DOMAIN, f"inverter_{serial}"),  # Hierarchiczne powiązanie z falownikiem
+                via_device=(DOMAIN, f"inverter_{serial}"),
                 sw_version=sw_version_str,
                 hw_version=hw_version_str,
             )
 
-        # Przypadek B: Encja należy do głównego urządzenia falownika hybrydowego
         return DeviceInfo(
             identifiers={(DOMAIN, f"inverter_{serial}")},
             name=f"Inverter {role_suffix}",
@@ -1887,7 +2008,6 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
             hw_version=hw_version_str,
             via_device=(DOMAIN, dtu_serial) if not getattr(self.entity_description, "is_dtu_sensor", False) else None,
         )
-
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -1904,7 +2024,6 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
             self._assumed_state = False
             return self._native_value
 
-        # Zero-Handling Guard: If value is None, try restoring from last known value
         if self.entity_description.assume_state:
             return self._last_known_value
         elif (
@@ -2146,8 +2265,8 @@ class HoymilesEmsModeSensorEntity(HoymilesEnergyStorageSensorEntity):
                         valley_in = w.get("valley_in", 0)
                         valley_out = w.get("valley_out", 0)
                         
-                        结构 = f"{days_str}={peak_tr}-{peak_in}-{peak_out},{valley_tr}-{valley_in}-{valley_out}"
-                        ranges.append(结构)
+                        Struktura = f"{days_str}={peak_tr}-{peak_in}-{peak_out},{valley_tr}-{valley_in}-{valley_out}"
+                        ranges.append(Struktura)
                     
                     time_settings_list.append(f"{dr_str}:{';'.join(ranges)}")
                 
