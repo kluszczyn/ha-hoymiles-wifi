@@ -2067,53 +2067,6 @@ class HoymilesEmsModeSensorEntity(HoymilesEnergyStorageSensorEntity):
         if data is None:
             return attrs
 
-        try:
-            raw_mode = int(data.ems_mode) if hasattr(data, "ems_mode") else None
-            if raw_mode is not None:
-                attrs["mode_code"] = raw_mode
-                attrs["mode_name"] = EMS_MODE_LABELS.get(raw_mode, f"Unknown [{raw_mode}]")
-        except (TypeError, ValueError):
-            pass
-
-        bms = getattr(data, "battery_management", None)
-        if bms is not None:
-            soc = getattr(bms, "state_of_charge", None)
-            if soc is not None:
-                attrs["battery_soc_pct"] = round(soc, 1)
-
-            soh = getattr(bms, "state_of_health", None)
-            if soh is not None:
-                attrs["battery_soh_pct"] = round(soh, 1)
-
-            power = getattr(bms, "power", None)
-            if power is not None:
-                attrs["battery_power_w"] = power
-                attrs["battery_direction"] = (
-                    "charging" if power > 0 else ("discharging" if power < 0 else "idle")
-                )
-
-            icm = getattr(bms, "internal_charge_mode", None)
-            if icm is not None:
-                attrs["internal_charge_mode"] = icm
-
-            idm = getattr(bms, "internal_discharge_mode", None)
-            if idm is not None:
-                attrs["internal_discharge_mode"] = idm
-
-        pflow = getattr(data, "power_flow", None)
-        if pflow is not None:
-            for field, label in (
-                ("pv_to_load", "pv_to_load_w"),
-                ("pv_to_battery", "pv_to_battery_w"),
-                ("pv_to_grid", "pv_to_grid_w"),
-                ("battery_to_load", "battery_to_load_w"),
-                ("battery_to_grid", "battery_to_grid_w"),
-                ("grid_to_load", "grid_to_load_w"),
-            ):
-                val = getattr(pflow, field, None)
-                if val is not None and val != 0:
-                    attrs[label] = val
-
         if (
             self.coordinator is not None
             and hasattr(self.coordinator, "ems_configs")
