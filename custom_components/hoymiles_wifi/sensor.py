@@ -1825,7 +1825,15 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
 
     @property
     def device_info(self) -> DeviceInfo:
-        """Dynamicznie rozdziela encje do urządzania Inwerter lub Bateria zachowując relacje klastra."""
+        """Dynamicznie buduje kompletne i bogate metadane urządzenia bezpośrednio na szczeblu encji."""
+        # Bezpieczne wyciągnięcie numerów seryjnych z encji oraz koordynatora
+        serial = getattr(self.entity_description, "serial_number", "unknown")
+        dtu_serial = getattr(self.coordinator, "dtu_serial_number", "unknown")
+        
+        # Pobranie config_entry bezpiecznie poprzez instancję koordynatora
+        config_entry = getattr(self.coordinator, "config_entry", None)
+        
+        # 1. Parsowanie indeksu inwertera ze ścieżki atrybutu w celu wyznaczenia sufiksu roli (M / S1..9)
         path = self._attribute_name
         inv_idx = 0
         if path.startswith("[") and "]" in path:
@@ -1833,27 +1841,53 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
                 inv_idx = int(path.split("[")[1].split("]")[0])
             except (ValueError, IndexError):
                 pass
-
+        
         role_suffix = "M" if inv_idx == 0 else f"S{inv_idx}"
-        serial = getattr(self.entity_description, "serial_number", None) or "cluster"
+        
+        # 2. Bezpieczne odczytanie danych konfiguracyjnych i metadanych inwertera z config_entry
+        inverter_info = {}
+        if config_entry and inv_idx < len(config_entry.data.get("hybrid_inverters", [])):
+            inverter_info = config_entry.data["hybrid_inverters"][inv_idx]
+        
+        # 3. Dynamiczne określenie fazowości na podstawie zbioru synchronizowanego przez koordynator
+        is_three_phase = str(serial) in getattr(self.coordinator, "three_phase_inverters_set", set())
+        phase_str = "3-phase" if is_three_phase else "1-phase"
+        
+        sw_m_ver = inverter_info.get("sw_m_ver", "Unknown")
+        sw_s_ver = inverter_info.get("sw_s_ver", "Unknown")
+        sw_sys_ver = inverter_info.get("sw_sys_ver", "Unknown")
+        pv_num = inverter_info.get("pv_num", 0)
+        bms_cap = inverter_info.get("bms_cap", 0)
+        bms_cap_val = f"{bms_cap * 0.1:.1f} kWh" if bms_cap else "None"
+        
+        # Budowanie sformatowanych ciągów dla wersji oprogramowania i diagnostyki sprzętowej
+        sw_version_str = f"Power: {sw_m_ver} | Safety: {sw_s_ver} | System: {sw_sys_ver}"
+        hw_version_str = f"{phase_str} | {pv_num} PV strings | Battery capacity: {bms_cap_val}"
+        model_name = inverter_info.get("model_name", "HYS Hybrid Inverter")
 
-        # Separacja architektoniczna: Jeśli opis encji wskazuje na BMS akumulatora, budujemy osobny kafelek urządzenia
+        # Przypadek A: Encja należy do autonomicznego, wydzielonego magazynu energii (BMS)
         if getattr(self.entity_description, "is_bms_device", False):
             return DeviceInfo(
                 identifiers={(DOMAIN, f"battery_{serial}")},
                 name=f"Battery {role_suffix}",
                 manufacturer="Hoymiles",
-                model="Integrated BMS Storage Pack",
-                via_device=(DOMAIN, f"inverter_{serial}"),  # Hierarchiczne powiązanie z inwerterem nadrzędnym
+                model=f"Integrated BMS Storage Pack ({phase_str})",
+                via_device=(DOMAIN, f"inverter_{serial}"),  # Hierarchiczne powiązanie z falownikiem
+                sw_version=sw_version_str,
+                hw_version=hw_version_str,
             )
 
-        # Domyślne przypisanie do fizycznej jednostki falownika hybrydowego
+        # Przypadek B: Encja należy do głównego urządzenia falownika hybrydowego
         return DeviceInfo(
             identifiers={(DOMAIN, f"inverter_{serial}")},
             name=f"Inverter {role_suffix}",
             manufacturer="Hoymiles",
-            model="HYS Hybrid Inverter",
+            model=model_name,
+            sw_version=sw_version_str,
+            hw_version=hw_version_str,
+            via_device=(DOMAIN, dtu_serial) if not getattr(self.entity_description, "is_dtu_sensor", False) else None,
         )
+
 
     @callback
     def _handle_coordinator_update(self) -> None:
