@@ -11,6 +11,7 @@ from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.service import SupportsResponse
+from homeassistant.exceptions import ConfigEntryNotReady
 from hoymiles_wifi.dtu import DTU
 
 from .const import (
@@ -114,27 +115,27 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         )
         hass_data[HASS_DATA_COORDINATOR] = data_coordinator
 
-        config_update_interval = timedelta(
-            seconds=DEFAULT_CONFIG_UPDATE_INTERVAL_SECONDS
-        )
-        config_coordinator = HoymilesConfigUpdateCoordinator(
-            hass=hass,
-            dtu=dtu,
-            config_entry=config_entry,
-            update_interval=config_update_interval,
-        )
-        hass_data[HASS_CONFIG_COORDINATOR] = config_coordinator
+    config_update_interval = timedelta(
+        seconds=DEFAULT_CONFIG_UPDATE_INTERVAL_SECONDS
+    )
+    config_coordinator = HoymilesConfigUpdateCoordinator(
+        hass=hass,
+        dtu=dtu,
+        config_entry=config_entry,
+        update_interval=config_update_interval,
+    )
+    hass_data[HASS_CONFIG_COORDINATOR] = config_coordinator
 
-        app_info_update_interval = timedelta(
-            seconds=DEFAULT_APP_INFO_UPDATE_INTERVAL_SECONDS
-        )
-        app_info_update_coordinator = HoymilesAppInfoUpdateCoordinator(
-            hass=hass,
-            dtu=dtu,
-            config_entry=config_entry,
-            update_interval=app_info_update_interval,
-        )
-        hass_data[HASS_APP_INFO_COORDINATOR] = app_info_update_coordinator
+    app_info_update_interval = timedelta(
+        seconds=DEFAULT_APP_INFO_UPDATE_INTERVAL_SECONDS
+    )
+    app_info_update_coordinator = HoymilesAppInfoUpdateCoordinator(
+        hass=hass,
+        dtu=dtu,
+        config_entry=config_entry,
+        update_interval=app_info_update_interval,
+    )
+    hass_data[HASS_APP_INFO_COORDINATOR] = app_info_update_coordinator
 
     if hybrid_inverters:
         energy_storage_data_coordinator = HoymilesEnergyStorageUpdateCoordinator(
@@ -150,22 +151,22 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
             energy_storage_data_coordinator
         )
 
-    _LOGGER.debug(f"  hass_data: {hass_data}")  # --- IGNORE ---
     _LOGGER.debug(f"  config_entry_id: {config_entry.entry_id}")
 
     hass.data[DOMAIN][config_entry.entry_id] = hass_data
-    if hybrid_inverters:
-        try:
-            await energy_storage_data_coordinator.async_config_entry_first_refresh()
-        except Exception as e:
-            _LOGGER.warning("First refresh of energy storage coordinator failed: %s", e)
 
-    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
-
-    if single_phase_inverters or three_phase_inverters or meters:
-        await data_coordinator.async_config_entry_first_refresh()
+    try:
+        if single_phase_inverters or three_phase_inverters or meters:
+            await data_coordinator.async_config_entry_first_refresh()
         await config_coordinator.async_config_entry_first_refresh()
         await app_info_update_coordinator.async_config_entry_first_refresh()
+        if hybrid_inverters:
+            await energy_storage_data_coordinator.async_config_entry_first_refresh()
+    except Exception as e:
+        _LOGGER.error("Failed to initialize communication with DTU: %s", e)
+        raise ConfigEntryNotReady(f"DTU connection failed: {e}")
+
+    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
     if hybrid_inverters:
         hass.services.async_register(
             domain=DOMAIN,

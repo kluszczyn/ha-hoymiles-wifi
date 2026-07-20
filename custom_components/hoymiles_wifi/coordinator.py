@@ -6,7 +6,7 @@ import logging
 import homeassistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, Platform
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from hoymiles_wifi.dtu import DTU
 from .util import is_encrypted_dtu, async_check_and_update_enc_rand
 
@@ -56,9 +56,10 @@ class HoymilesRealDataUpdateCoordinator(HoymilesDataUpdateCoordinator):
         response = await self._dtu.async_get_real_data_new()
 
         if not response:
-            _LOGGER.debug(
+            _LOGGER.warning(
                 "Unable to retrieve real data new. Inverter might be offline."
             )
+            raise UpdateFailed("Unable to retrieve real data new.")
         return response
 
 
@@ -72,7 +73,8 @@ class HoymilesConfigUpdateCoordinator(HoymilesDataUpdateCoordinator):
         response = await self._dtu.async_get_config()
 
         if not response:
-            _LOGGER.debug("Unable to retrieve config data. Inverter might be offline.")
+            _LOGGER.warning("Unable to retrieve config data. Inverter might be offline.")
+            raise UpdateFailed("Unable to retrieve config data.")
 
         return response
 
@@ -96,9 +98,10 @@ class HoymilesAppInfoUpdateCoordinator(HoymilesDataUpdateCoordinator):
                 )
 
         if not response:
-            _LOGGER.debug(
+            _LOGGER.warning(
                 "Unable to retrieve app information data. Inverter might be offline."
             )
+            raise UpdateFailed("Unable to retrieve app information data.")
         return response
 
 
@@ -112,7 +115,8 @@ class HoymilesGatewayInfoUpdateCoordinator(HoymilesDataUpdateCoordinator):
         response = await self._dtu.async_get_gateway_info()
 
         if not response:
-            _LOGGER.debug("Unable to retrieve gateway info. Inverter might be offline.")
+            _LOGGER.warning("Unable to retrieve gateway info. Inverter might be offline.")
+            raise UpdateFailed("Unable to retrieve gateway info.")
         return response
 
 
@@ -128,9 +132,10 @@ class HoymilesGatewayNetworkInfoUpdateCoordinator(HoymilesDataUpdateCoordinator)
         )
 
         if not response:
-            _LOGGER.debug(
+            _LOGGER.warning(
                 "Unable to retrieve network information. Inverter might be offline."
             )
+            raise UpdateFailed("Unable to retrieve network information.")
         return response
 
 
@@ -214,8 +219,9 @@ class HoymilesEnergyStorageUpdateCoordinator(HoymilesDataUpdateCoordinator):
                             _LOGGER.warning("Failed to fetch EMS config for inverter %s: %s", inv_sn, e)
 
         if not responses:
-            _LOGGER.debug(
+            _LOGGER.warning(
                 "Unable to retrieve energy storage data. Inverter might be offline."
             )
+            raise UpdateFailed("Unable to retrieve energy storage data.")
         return responses
 
