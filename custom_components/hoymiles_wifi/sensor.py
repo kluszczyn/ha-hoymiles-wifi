@@ -107,6 +107,7 @@ class HoymilesEnergyStorageSensorEntityDescription(
     is_smart_load_device: bool = False
     is_external_meter_device: bool = False
     is_generator_device: bool = False
+    enum_map: dict | None = None  # Optional mapping from raw int → StrEnum value for ENUM device class sensors
 
 
 @dataclass(frozen=True)
@@ -714,6 +715,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         translation_key="ems_working_mode",
         device_class=SensorDeviceClass.ENUM,
         options=[mode.value for mode in EmsWorkingMode],
+        enum_map=EMS_WORKING_MODE_MAP,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.state_of_charge",
@@ -1152,6 +1154,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         device_class=SensorDeviceClass.ENUM,
         options=[status.value for status in InverterStatus],
         entity_category=EntityCategory.DIAGNOSTIC,
+        enum_map=INVERTER_STATUS_MAP,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.frequency",
@@ -1382,6 +1385,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         options=[status.value for status in BatteryStatus],
         is_bms_device=True,
         entity_category=EntityCategory.DIAGNOSTIC,
+        enum_map=BATTERY_STATUS_MAP,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.fault_code",
@@ -1744,6 +1748,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         options=[status.value for status in BatteryStatus],
         entity_category=EntityCategory.DIAGNOSTIC,
         is_battery_pack_device=True,
+        enum_map=BATTERY_STATUS_MAP,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_packs[<pack_count>].health_status",
@@ -2270,8 +2275,9 @@ def get_sensors_for_hybrid_inverter_description(
             new_key = description.key.replace("<inverter_count>", str(index))
 
             if "<pv_panel_count>" in description.key:
-                # TODO: Dynamically determine number of PV panels
-                for pv_index in range(0, 2):
+                # Determine PV string count from inverter config; default to 2 if not available
+                pv_count = inverter.get("pv_num", 2) or 2
+                for pv_index in range(pv_count):
                     new_pv_index_key = new_key.replace(
                         "<pv_panel_count>", str(pv_index)
                     )
@@ -2300,7 +2306,9 @@ def get_sensors_for_hybrid_inverter_description(
                 if is_empty:
                     continue
 
-                for load_index in range(0, 2):
+                # Use actual number of reported smart loads instead of a hard-coded maximum
+                load_count = len(smart_loads)
+                for load_index in range(load_count):
                     new_load_key = new_key.replace("<load_count>", str(load_index))
                     if "<phase_count>" in description.key:
                         is_three_phase = False
@@ -2343,7 +2351,9 @@ def get_sensors_for_hybrid_inverter_description(
                 if sn in (0, "0", "", None):
                     continue
 
-                for pack_index in range(0, 4):
+                # Use actual number of reported battery packs instead of a hard-coded maximum
+                pack_count = len(battery_packs)
+                for pack_index in range(pack_count):
                     new_pack_key = new_key.replace("<pack_count>", str(pack_index))
                     updated_description = dataclasses.replace(
                         description,
@@ -2361,7 +2371,9 @@ def get_sensors_for_hybrid_inverter_description(
                 if not external_meters:
                     continue
 
-                for meter_index in range(0, 2):
+                # Use actual number of reported external meters instead of a hard-coded maximum
+                meter_count = len(external_meters)
+                for meter_index in range(meter_count):
                     new_meter_key = new_key.replace("<meter_count>", str(meter_index))
                     updated_description = dataclasses.replace(
                         description,
@@ -2741,12 +2753,27 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
 
     @property
     def device_info(self) -> DeviceInfo:
-        """Dynamically builds complete and rich device metadata directly at the entity level."""
+        """Return device metadata by dispatching to the appropriate sub-builder."""
+        ctx = self._build_device_context()
+
+        if getattr(self.entity_description, "is_bms_device", False):
+            return self._build_bms_device_info(ctx)
+        if getattr(self.entity_description, "is_battery_pack_device", False):
+            return self._build_battery_pack_device_info(ctx)
+        if getattr(self.entity_description, "is_smart_load_device", False):
+            return self._build_smart_load_device_info(ctx)
+        if getattr(self.entity_description, "is_external_meter_device", False):
+            return self._build_external_meter_device_info(ctx)
+        if getattr(self.entity_description, "is_generator_device", False):
+            return self._build_generator_device_info(ctx)
+        return self._build_inverter_device_info(ctx)
+
+    def _build_device_context(self) -> dict:
+        """Collect shared metadata used by all device builders."""
         serial = getattr(self.entity_description, "serial_number", "unknown")
         dtu_serial = getattr(self.coordinator, "dtu_serial_number", "unknown")
-        
         config_entry = getattr(self.coordinator, "config_entry", None)
-        
+
         path = self._attribute_name
         inv_idx = 0
         if path.startswith("[") and "]" in path:
@@ -2754,100 +2781,117 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
                 inv_idx = int(path.split("[")[1].split("]")[0])
             except (ValueError, IndexError):
                 pass
-        
-        role_suffix = "M" if inv_idx == 0 else f"S{inv_idx}"
-        
+
         inverter_info = {}
         if config_entry and inv_idx < len(config_entry.data.get("hybrid_inverters", [])):
             inverter_info = config_entry.data["hybrid_inverters"][inv_idx]
-        
+
         is_three_phase = str(serial) in getattr(self.coordinator, "three_phase_inverters_set", set())
         phase_str = "3-phase" if is_three_phase else "1-phase"
-        
-        sw_m_ver = inverter_info.get("sw_m_ver", "Unknown")
-        sw_s_ver = inverter_info.get("sw_s_ver", "Unknown")
-        sw_sys_ver = inverter_info.get("sw_sys_ver", "Unknown")
-        pv_num = inverter_info.get("pv_num", 0)
         bms_cap = inverter_info.get("bms_cap", 0)
-        bms_cap_val = f"{bms_cap * 0.1:.1f} kWh" if bms_cap else "None"
-        
-        sw_version_str = f"Power: {sw_m_ver} | Safety: {sw_s_ver} | System: {sw_sys_ver}"
-        hw_version_str = f"{phase_str} | {pv_num} PV strings | Battery capacity: {bms_cap_val}"
-        model_name = inverter_info.get("model_name", "HYS Hybrid Inverter")
 
-        if getattr(self.entity_description, "is_bms_device", False):
-            return DeviceInfo(
-                identifiers={(DOMAIN, f"battery_{serial}")},
-                name=f"Battery {role_suffix}",
-                manufacturer="Hoymiles",
-                model=f"Integrated BMS Storage Pack ({phase_str})",
-                via_device=(DOMAIN, f"inverter_{serial}"),
-                sw_version=sw_version_str,
-                hw_version=hw_version_str,
-            )
+        return {
+            "serial": serial,
+            "dtu_serial": dtu_serial,
+            "path": path,
+            "inv_idx": inv_idx,
+            "role_suffix": "M" if inv_idx == 0 else f"S{inv_idx}",
+            "inverter_info": inverter_info,
+            "phase_str": phase_str,
+            "sw_version_str": (
+                f"Power: {inverter_info.get('sw_m_ver', 'Unknown')} | "
+                f"Safety: {inverter_info.get('sw_s_ver', 'Unknown')} | "
+                f"System: {inverter_info.get('sw_sys_ver', 'Unknown')}"
+            ),
+            "hw_version_str": (
+                f"{phase_str} | "
+                f"{inverter_info.get('pv_num', 0)} PV strings | "
+                f"Battery capacity: {f'{bms_cap * 0.1:.1f} kWh' if bms_cap else 'None'}"
+            ),
+            "model_name": inverter_info.get("model_name", "HYS Hybrid Inverter"),
+        }
 
-        if getattr(self.entity_description, "is_battery_pack_device", False):
-            pack_idx = "X"
-            if ".battery_packs[" in path:
-                try:
-                    pack_idx = path.split(".battery_packs[")[1].split("]")[0]
-                except (ValueError, IndexError):
-                    pass
-            return DeviceInfo(
-                identifiers={(DOMAIN, f"battery_pack_{serial}_{pack_idx}")},
-                name=f"Battery Pack {pack_idx} ({role_suffix})",
-                manufacturer="Hoymiles",
-                model="Battery Pack Module",
-                via_device=(DOMAIN, f"inverter_{serial}"),
-            )
-
-        if getattr(self.entity_description, "is_smart_load_device", False):
-            load_idx = "X"
-            if ".smart_loads[" in path:
-                try:
-                    load_idx = path.split(".smart_loads[")[1].split("]")[0]
-                except (ValueError, IndexError):
-                    pass
-            return DeviceInfo(
-                identifiers={(DOMAIN, f"smart_load_{serial}_{load_idx}")},
-                name=f"Smart Load {load_idx} ({role_suffix})",
-                manufacturer="Hoymiles",
-                model="Smart Load Terminal",
-                via_device=(DOMAIN, f"inverter_{serial}"),
-            )
-
-        if getattr(self.entity_description, "is_external_meter_device", False):
-            meter_idx = "X"
-            if ".external_meters[" in path:
-                try:
-                    meter_idx = path.split(".external_meters[")[1].split("]")[0]
-                except (ValueError, IndexError):
-                    pass
-            return DeviceInfo(
-                identifiers={(DOMAIN, f"external_meter_{serial}_{meter_idx}")},
-                name=f"External Meter {meter_idx} ({role_suffix})",
-                manufacturer="Hoymiles",
-                model="External Energy Meter",
-                via_device=(DOMAIN, f"inverter_{serial}"),
-            )
-
-        if getattr(self.entity_description, "is_generator_device", False):
-            return DeviceInfo(
-                identifiers={(DOMAIN, f"generator_{serial}")},
-                name=f"Generator ({role_suffix})",
-                manufacturer="Hoymiles",
-                model="Generator Terminal",
-                via_device=(DOMAIN, f"inverter_{serial}"),
-            )
-
+    def _build_inverter_device_info(self, ctx: dict) -> DeviceInfo:
+        """Build DeviceInfo for the inverter itself."""
         return DeviceInfo(
-            identifiers={(DOMAIN, f"inverter_{serial}")},
-            name=f"Inverter {role_suffix}",
+            identifiers={(DOMAIN, f"inverter_{ctx['serial']}")},
+            name=f"Inverter {ctx['role_suffix']}",
             manufacturer="Hoymiles",
-            model=model_name,
-            sw_version=sw_version_str,
-            hw_version=hw_version_str,
-            via_device=(DOMAIN, dtu_serial) if not getattr(self.entity_description, "is_dtu_sensor", False) else None,
+            model=ctx["model_name"],
+            sw_version=ctx["sw_version_str"],
+            hw_version=ctx["hw_version_str"],
+            via_device=(
+                (DOMAIN, ctx["dtu_serial"])
+                if not getattr(self.entity_description, "is_dtu_sensor", False)
+                else None
+            ),
+        )
+
+    def _build_bms_device_info(self, ctx: dict) -> DeviceInfo:
+        """Build DeviceInfo for the integrated battery management system."""
+        return DeviceInfo(
+            identifiers={(DOMAIN, f"battery_{ctx['serial']}")},
+            name=f"Battery {ctx['role_suffix']}",
+            manufacturer="Hoymiles",
+            model=f"Integrated BMS Storage Pack ({ctx['phase_str']})",
+            via_device=(DOMAIN, f"inverter_{ctx['serial']}"),
+            sw_version=ctx["sw_version_str"],
+            hw_version=ctx["hw_version_str"],
+        )
+
+    def _build_battery_pack_device_info(self, ctx: dict) -> DeviceInfo:
+        """Build DeviceInfo for an individual battery pack module."""
+        pack_idx = "X"
+        try:
+            pack_idx = ctx["path"].split(".battery_packs[")[1].split("]")[0]
+        except (IndexError, ValueError):
+            pass
+        return DeviceInfo(
+            identifiers={(DOMAIN, f"battery_pack_{ctx['serial']}_{pack_idx}")},
+            name=f"Battery Pack {pack_idx} ({ctx['role_suffix']})",
+            manufacturer="Hoymiles",
+            model="Battery Pack Module",
+            via_device=(DOMAIN, f"inverter_{ctx['serial']}"),
+        )
+
+    def _build_smart_load_device_info(self, ctx: dict) -> DeviceInfo:
+        """Build DeviceInfo for a smart load terminal."""
+        load_idx = "X"
+        try:
+            load_idx = ctx["path"].split(".smart_loads[")[1].split("]")[0]
+        except (IndexError, ValueError):
+            pass
+        return DeviceInfo(
+            identifiers={(DOMAIN, f"smart_load_{ctx['serial']}_{load_idx}")},
+            name=f"Smart Load {load_idx} ({ctx['role_suffix']})",
+            manufacturer="Hoymiles",
+            model="Smart Load Terminal",
+            via_device=(DOMAIN, f"inverter_{ctx['serial']}"),
+        )
+
+    def _build_external_meter_device_info(self, ctx: dict) -> DeviceInfo:
+        """Build DeviceInfo for an external energy meter."""
+        meter_idx = "X"
+        try:
+            meter_idx = ctx["path"].split(".external_meters[")[1].split("]")[0]
+        except (IndexError, ValueError):
+            pass
+        return DeviceInfo(
+            identifiers={(DOMAIN, f"external_meter_{ctx['serial']}_{meter_idx}")},
+            name=f"External Meter {meter_idx} ({ctx['role_suffix']})",
+            manufacturer="Hoymiles",
+            model="External Energy Meter",
+            via_device=(DOMAIN, f"inverter_{ctx['serial']}"),
+        )
+
+    def _build_generator_device_info(self, ctx: dict) -> DeviceInfo:
+        """Build DeviceInfo for a generator terminal."""
+        return DeviceInfo(
+            identifiers={(DOMAIN, f"generator_{ctx['serial']}")},
+            name=f"Generator ({ctx['role_suffix']})",
+            manufacturer="Hoymiles",
+            model="Generator Terminal",
+            via_device=(DOMAIN, f"inverter_{ctx['serial']}"),
         )
 
     @callback
@@ -2938,16 +2982,18 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
             return
 
         if new_native_value is not None and self.entity_description.device_class == SensorDeviceClass.ENUM:
-            try:
-                val_int = int(new_native_value)
-                if self.entity_description.translation_key == "battery_status" or self.entity_description.translation_key == "battery_pack_status":
-                    new_native_value = BATTERY_STATUS_MAP.get(val_int, BatteryStatus.UNKNOWN).value
-                elif self.entity_description.translation_key == "inverter_status":
-                    new_native_value = INVERTER_STATUS_MAP.get(val_int, InverterStatus.UNKNOWN).value
-                elif self.entity_description.translation_key == "ems_working_mode":
-                    new_native_value = EMS_WORKING_MODE_MAP.get(val_int, EmsWorkingMode.UNKNOWN).value
-            except (ValueError, TypeError):
-                pass
+            enum_map = getattr(self.entity_description, "enum_map", None)
+            if enum_map is not None:
+                try:
+                    val_int = int(new_native_value)
+                    new_native_value = enum_map.get(val_int, "unknown")
+                except (ValueError, TypeError) as err:
+                    _LOGGER.debug(
+                        "Failed to map ENUM value '%s' for '%s': %s",
+                        new_native_value,
+                        self.entity_description.key,
+                        err,
+                    )
 
         if new_native_value is not None and self._conversion_factor is not None:
             new_native_value *= self._conversion_factor
