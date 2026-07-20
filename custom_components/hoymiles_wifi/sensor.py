@@ -33,6 +33,12 @@ import hoymiles_wifi.hoymiles
 from hoymiles_wifi.hoymiles import DTUType, get_dtu_model_type
 
 from .const import (
+    BatteryStatus,
+    InverterStatus,
+    EmsWorkingMode,
+    BATTERY_STATUS_MAP,
+    INVERTER_STATUS_MAP,
+    EMS_WORKING_MODE_MAP,
     CONF_DTU_SERIAL_NUMBER,
     CONF_INVERTERS,
     CONF_HYBRID_INVERTERS,
@@ -705,8 +711,9 @@ APP_INFO_SENSORS: tuple[HoymilesSensorEntityDescription, ...] = (
 HOYMILES_ENERGY_STORAGE_SENSORS = [
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].ems_mode",
-        translation_key="ems_mode",
-        device_class=None,
+        translation_key="ems_working_mode",
+        device_class=SensorDeviceClass.ENUM,
+        options=[mode.value for mode in EmsWorkingMode],
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.state_of_charge",
@@ -1143,6 +1150,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
         key="[<inverter_count>].inverter.param.status",
         translation_key="inverter_status",
         device_class=SensorDeviceClass.ENUM,
+        options=[status.value for status in InverterStatus],
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
     HoymilesEnergyStorageSensorEntityDescription(
@@ -1370,7 +1378,8 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.status",
         translation_key="battery_status",
-        device_class=None,
+        device_class=SensorDeviceClass.ENUM,
+        options=[status.value for status in BatteryStatus],
         is_bms_device=True,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
@@ -1731,10 +1740,11 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_packs[<pack_count>].status",
         translation_key="battery_pack_status",
-        device_class=None,
+        device_class=SensorDeviceClass.ENUM,
+        options=[status.value for status in BatteryStatus],
         entity_category=EntityCategory.DIAGNOSTIC,
-
-        is_battery_pack_device=True,    ),
+        is_battery_pack_device=True,
+    ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_packs[<pack_count>].health_status",
         translation_key="battery_pack_health",
@@ -2114,11 +2124,7 @@ async def async_setup_entry(
 
     if hybrid_inverters:
         for description in HOYMILES_ENERGY_STORAGE_SENSORS:
-            # Use specialised entity class for the EMS working mode sensor
-            if description.translation_key == "ems_mode":
-                entity_class = HoymilesEmsModeSensorEntity
-            else:
-                entity_class = HoymilesEnergyStorageSensorEntity
+            entity_class = HoymilesEnergyStorageSensorEntity
             sensor_entities = get_sensors_for_hybrid_inverter_description(
                 config_entry,
                 description,
@@ -2928,6 +2934,18 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
             self._native_value = None
             return
 
+        if new_native_value is not None and self.entity_description.device_class == SensorDeviceClass.ENUM:
+            try:
+                val_int = int(new_native_value)
+                if self.entity_description.translation_key == "battery_status" or self.entity_description.translation_key == "battery_pack_status":
+                    new_native_value = BATTERY_STATUS_MAP.get(val_int, BatteryStatus.UNKNOWN).value
+                elif self.entity_description.translation_key == "inverter_status":
+                    new_native_value = INVERTER_STATUS_MAP.get(val_int, InverterStatus.UNKNOWN).value
+                elif self.entity_description.translation_key == "ems_working_mode":
+                    new_native_value = EMS_WORKING_MODE_MAP.get(val_int, EmsWorkingMode.UNKNOWN).value
+            except (ValueError, TypeError):
+                pass
+
         if new_native_value is not None and self._conversion_factor is not None:
             new_native_value *= self._conversion_factor
 
@@ -2967,213 +2985,4 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
 
 
 # Mapping of numeric EMS/BMS working mode values to human-readable labels
-EMS_MODE_LABELS: dict[int, str] = {
-    1: "Self-Consumption Mode",
-    2: "Economy Mode",
-    3: "Backup Mode",
-    4: "Off-Grid Mode",
-    5: "Force Charge Mode",
-    6: "Force Discharge Mode",
-    7: "Peak Shaving Mode",
-    8: "Time of Use Mode",
-}
 
-
-class HoymilesEmsModeSensorEntity(HoymilesEnergyStorageSensorEntity):
-    """Sensor entity that displays the EMS working mode as a human-readable label."""
-
-    @property
-    def native_value(self):
-        """Return the working mode as a descriptive label with numeric code."""
-        raw = super().native_value
-        if raw is None:
-            return None
-        try:
-            mode_int = int(raw)
-        except (TypeError, ValueError):
-            return str(raw)
-        label = EMS_MODE_LABELS.get(mode_int, f"Unknown mode")
-        return f"{label} [{mode_int}]"
-
-    @property
-    def extra_state_attributes(self):
-        """Return enriched attributes with battery and inverter state context."""
-        attrs = dict(super().extra_state_attributes)
-
-        key = self._attribute_name
-        inv_idx = 0
-        if key.startswith("[") and "]" in key:
-            try:
-                inv_idx = int(key.split("[")[1].split("]")[0])
-            except (ValueError, IndexError):
-                pass
-
-        data = None
-        if (
-            self.coordinator is not None
-            and hasattr(self.coordinator, "data")
-            and self.coordinator.data is not None
-        ):
-            try:
-                data = self.coordinator.data[inv_idx]
-            except (IndexError, TypeError):
-                data = None
-
-        if data is None:
-            return attrs
-
-        if (
-            self.coordinator is not None
-            and hasattr(self.coordinator, "ems_configs")
-            and self.coordinator.ems_configs
-        ):
-            inv_sn_str = str(self.entity_description.serial_number) if hasattr(self.entity_description, "serial_number") else None
-            if inv_sn_str and inv_sn_str in self.coordinator.ems_configs:
-                cfg = self.coordinator.ems_configs[inv_sn_str]
-                
-                def decode_time(val):
-                    if not val:
-                        return "00:00-00:00"
-                    try:
-                        v = int(val)
-                    except (ValueError, TypeError):
-                        return "00:00-00:00"
-                    fh = (v >> 24) & 0xFF
-                    fm = (v >> 16) & 0xFF
-                    th = (v >> 8) & 0xFF
-                    tm = v & 0xFF
-                    return f"{fh:02d}:{fm:02d}-{th:02d}:{tm:02d}"
-
-                def decode_date(val):
-                    if not val:
-                        return "01.01-12.31"
-                    try:
-                        v = int(val)
-                    except (ValueError, TypeError):
-                        return "01.01-12.31"
-                    fm = (v >> 24) & 0xFF
-                    fd = (v >> 16) & 0xFF
-                    tm = (v >> 8) & 0xFF
-                    td = v & 0xFF
-                    return f"{fm:02d}.{fd:02d}-{tm:02d}.{td:02d}"
-
-                def decode_days(val):
-                    if not val:
-                        return ""
-                    try:
-                        v = int(val)
-                    except (ValueError, TypeError):
-                        return ""
-                    days = []
-                    if v & 1: days.append("1")
-                    if v & 2: days.append("2")
-                    if v & 4: days.append("3")
-                    if v & 8: days.append("4")
-                    if v & 16: days.append("5")
-                    if v & 32: days.append("6")
-                    if v & 64: days.append("7")
-                    return ",".join(days)
-
-                configs = {}
-
-                selfu = cfg.get("selfu", {})
-                configs["self_use"] = {
-                    "bms_mode": "self_use",
-                    "rev_soc": selfu.get("rev_soc", 0),
-                }
-
-                date_cfg = cfg.get("date", {})
-                time_settings_list = []
-                for ts in date_cfg.get("ts", []):
-                    dr_str = decode_date(ts.get("dr", 0))
-                    w1 = ts.get("w1", {})
-                    w2 = ts.get("w2", {})
-                    
-                    ranges = []
-                    for w in [w1, w2]:
-                        if not w:
-                            continue
-                        days_str = decode_days(w.get("wr", 0))
-                        peak_tr = decode_time(w.get("peak_time", 0))
-                        valley_tr = decode_time(w.get("valley_time", 0))
-                        peak_in = w.get("peak_in", 0)
-                        peak_out = w.get("peak_out", 0)
-                        valley_in = w.get("valley_in", 0)
-                        valley_out = w.get("valley_out", 0)
-                        
-                        Struktura = f"{days_str}={peak_tr}-{peak_in}-{peak_out},{valley_tr}-{valley_in}-{valley_out}"
-                        ranges.append(Struktura)
-                    
-                    time_settings_list.append(f"{dr_str}:{';'.join(ranges)}")
-                
-                configs["economic"] = {
-                    "bms_mode": "economic",
-                    "rev_soc": date_cfg.get("rev_soc", 0),
-                    "time_settings": "||".join(time_settings_list) if time_settings_list else "",
-                }
-
-                back = cfg.get("back", {})
-                configs["backup_power"] = {
-                    "bms_mode": "backup_power",
-                    "rev_soc": back.get("rev_soc", 0),
-                }
-
-                configs["pure_off_grid"] = {
-                    "bms_mode": "pure_off_grid",
-                }
-
-                chrg_m = cfg.get("chrg_m", {})
-                configs["forced_charging"] = {
-                    "bms_mode": "forced_charging",
-                    "rev_soc": chrg_m.get("rev_soc", 0),
-                    "max_power": round(chrg_m.get("max_p", 0) / 10),
-                }
-
-                dchg_m = cfg.get("dchg_m", {})
-                configs["forced_discharge"] = {
-                    "bms_mode": "forced_discharge",
-                    "rev_soc": dchg_m.get("rev_soc", 0),
-                    "max_power": round(dchg_m.get("max_p", 0) / 10),
-                }
-
-                peakcut = cfg.get("peakcut", {})
-                configs["peak_shaving"] = {
-                    "bms_mode": "peak_shaving",
-                    "peak_soc": peakcut.get("peakrev_soc", 0),
-                    "peak_meter_power": peakcut.get("peak_meterp", 0),
-                }
-
-                tou_cfg = cfg.get("tou", {})
-                time_periods_list = []
-                for tr in tou_cfg.get("trs", []):
-                    chg_tr = decode_time(tr.get("chg_tr", 0))
-                    dchg_tr = decode_time(tr.get("dchg_tr", 0))
-                    chg_p = tr.get("chg_p", 0)
-                    dchg_p = tr.get("dchg_p", 0)
-                    min_soc = tr.get("min_soc", 0)
-                    max_soc = tr.get("max_soc", 0)
-                    time_periods_list.append(f"{chg_tr}-{chg_p}-{max_soc}|{dchg_tr}-{dchg_p}-{min_soc}")
-
-                configs["time_of_use"] = {
-                    "bms_mode": "time_of_use",
-                    "rev_soc": tou_cfg.get("rev_soc", 0),
-                    "time_periods": "||".join(time_periods_list) if time_periods_list else "",
-                }
-
-                for mode_key, mode_cfg in configs.items():
-                    attrs[f"{mode_key}_configuration"] = mode_cfg
-
-                active_mode_code = cfg.get("mode", 1)
-                active_mode_name = {
-                    1: "self_use",
-                    2: "economic",
-                    3: "backup_power",
-                    4: "pure_off_grid",
-                    5: "forced_charging",
-                    6: "forced_discharge",
-                    7: "peak_shaving",
-                    8: "time_of_use",
-                }.get(active_mode_code, "self_use")
-                attrs["current_mode_configuration"] = configs.get(active_mode_name)
-
-        return attrs

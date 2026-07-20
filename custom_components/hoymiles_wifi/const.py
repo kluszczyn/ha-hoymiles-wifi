@@ -49,3 +49,73 @@ If you have any issues with it please open an issue here:
 {ISSUE_URL}
 -------------------------------------------------------------------
 """
+
+from enum import StrEnum
+
+class BatteryStatus(StrEnum):
+    """Battery status states."""
+    STANDBY = "standby"
+    CHARGING = "charging"
+    DISCHARGING = "discharging"
+    SLEEP = "sleep"
+    FLOAT_CHARGING = "float_charging"
+    EQUALIZATION_CHARGING = "equalization_charging"
+    UNKNOWN = "unknown"
+
+class InverterStatus(StrEnum):
+    """Inverter status states."""
+    POWER_ON_INIT = "power_on_init"
+    STANDBY = "standby"
+    GRID_ON_TEST = "grid_on_test"
+    GRID_ON = "grid_on"
+    FAULT = "fault"
+    GRID_OFF = "grid_off"
+    BYPASS = "bypass"
+    PV_CHARGE_BAT = "pv_charge_bat"
+    GEN_MODE = "gen_mode"
+    UNKNOWN = "unknown"
+
+class EmsWorkingMode(StrEnum):
+    """EMS working mode states."""
+    SELF_CONSUMPTION = "self_consumption"
+    ECONOMY = "economy"
+    BACKUP = "backup"
+    OFF_GRID = "off_grid"
+    FORCE_CHARGE = "force_charge"
+    FORCE_DISCHARGE = "force_discharge"
+    PEAK_SHAVING = "peak_shaving"
+    TIME_OF_USE = "time_of_use"
+    UNKNOWN = "unknown"
+
+BATTERY_STATUS_MAP: dict[int, BatteryStatus] = {
+    0: BatteryStatus.STANDBY,
+    1: BatteryStatus.CHARGING,
+    2: BatteryStatus.DISCHARGING,
+    3: BatteryStatus.SLEEP,
+    4: BatteryStatus.FLOAT_CHARGING,
+    5: BatteryStatus.EQUALIZATION_CHARGING,
+}
+
+INVERTER_STATUS_MAP: dict[int, InverterStatus] = {
+    0: InverterStatus.POWER_ON_INIT,
+    1: InverterStatus.STANDBY,
+    2: InverterStatus.GRID_ON_TEST,
+    3: InverterStatus.GRID_ON,
+    4: InverterStatus.FAULT,
+    5: InverterStatus.GRID_OFF,
+    6: InverterStatus.BYPASS,
+    7: InverterStatus.PV_CHARGE_BAT,
+    8: InverterStatus.GEN_MODE,
+}
+
+EMS_WORKING_MODE_MAP: dict[int, EmsWorkingMode] = {
+    1: EmsWorkingMode.SELF_CONSUMPTION,
+    2: EmsWorkingMode.ECONOMY,
+    3: EmsWorkingMode.BACKUP,
+    4: EmsWorkingMode.OFF_GRID,
+    5: EmsWorkingMode.FORCE_CHARGE,
+    6: EmsWorkingMode.FORCE_DISCHARGE,
+    7: EmsWorkingMode.PEAK_SHAVING,
+    8: EmsWorkingMode.TIME_OF_USE,
+}
+

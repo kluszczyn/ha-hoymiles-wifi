@@ -69,8 +69,19 @@
       "inverter_warning_number": {
         "name": "Warning number"
       },
-      "ems_mode": {
-        "name": "Working mode"
+      "ems_working_mode": {
+        "name": "EMS working mode",
+        "state": {
+          "self_consumption": "Self-Consumption Mode",
+          "economy": "Economy Mode",
+          "backup": "Backup Mode",
+          "off_grid": "Off-Grid Mode",
+          "force_charge": "Force Charge Mode",
+          "force_discharge": "Force Discharge Mode",
+          "peak_shaving": "Peak Shaving Mode",
+          "time_of_use": "Time of Use Mode",
+          "unknown": "Unknown"
+        }
       },
       "wifi_ssid": {
         "name": "Wi-Fi SSID"
@@ -121,7 +132,19 @@
         "name": "Load frequency"
       },
       "inverter_status": {
-        "name": "Status"
+        "name": "Inverter status",
+        "state": {
+          "power_on_init": "Power on initialization",
+          "standby": "Standby",
+          "grid_on_test": "Grid connection test",
+          "grid_on": "Normal operation (On-Grid)",
+          "fault": "Fault",
+          "grid_off": "Off-grid operation (EPS)",
+          "bypass": "Bypass mode",
+          "pv_charge_bat": "PV charging battery",
+          "gen_mode": "Generator mode",
+          "unknown": "Unknown"
+        }
       },
       "inverter_frequency": {
         "name": "Frequency"
@@ -409,7 +432,16 @@
         "name": "Battery type"
       },
       "battery_status": {
-        "name": "Battery status"
+        "name": "Battery status",
+        "state": {
+          "standby": "Standby",
+          "charging": "Charging",
+          "discharging": "Discharging",
+          "sleep": "Sleep",
+          "float_charging": "Float charging",
+          "equalization_charging": "Equalization charging",
+          "unknown": "Unknown"
+        }
       },
       "battery_fault_code": {
         "name": "Battery fault code"
