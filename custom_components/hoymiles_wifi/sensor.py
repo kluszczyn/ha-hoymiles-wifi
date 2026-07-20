@@ -2232,6 +2232,32 @@ def get_sensors_for_hybrid_inverter_description(
                 if not is_allowed_slave_sensor:
                     continue
 
+            # Pobranie danych telemetrycznych inwertera
+            inv_data = None
+            if coordinator and coordinator.data:
+                inverters_data = None
+                if isinstance(coordinator.data, dict) and "inverters" in coordinator.data:
+                    inverters_data = coordinator.data["inverters"]
+                elif hasattr(coordinator.data, "inverters"):
+                    inverters_data = getattr(coordinator.data, "inverters")
+                
+                if inverters_data:
+                    serial = inverter.get("inverter_serial_number")
+                    if serial in inverters_data:
+                        inv_data = inverters_data[serial]
+                    elif str(serial) in inverters_data:
+                        inv_data = inverters_data[str(serial)]
+
+            if "generator" in description.key:
+                if not inv_data:
+                    continue
+                generator_data = inv_data.get("generator") if isinstance(inv_data, dict) else getattr(inv_data, "generator", None)
+                if not generator_data:
+                    continue
+                status = generator_data.get("status") if isinstance(generator_data, dict) else getattr(generator_data, "status", None)
+                if status == 0 or status is None:
+                    continue
+
             new_key = description.key.replace("<inverter_count>", str(index))
 
             if "<pv_panel_count>" in description.key:
@@ -2249,7 +2275,22 @@ def get_sensors_for_hybrid_inverter_description(
                     )
                     sensor = class_name(config_entry, updated_description, coordinator)
                     sensors.append(sensor)
+
             elif "<load_count>" in description.key:
+                if not inv_data:
+                    continue
+                smart_loads = inv_data.get("smart_loads") if isinstance(inv_data, dict) else getattr(inv_data, "smart_loads", [])
+                if not smart_loads:
+                    continue
+                first_load = smart_loads[0]
+                is_empty = False
+                if hasattr(first_load, "ListFields"):
+                    is_empty = not first_load.ListFields()
+                elif isinstance(first_load, dict):
+                    is_empty = not any(first_load.values())
+                if is_empty:
+                    continue
+
                 for load_index in range(0, 2):
                     new_load_key = new_key.replace("<load_count>", str(load_index))
                     if "<phase_count>" in description.key:
@@ -2283,6 +2324,16 @@ def get_sensors_for_hybrid_inverter_description(
                         sensors.append(sensor)
 
             elif "<pack_count>" in description.key:
+                if not inv_data:
+                    continue
+                battery_packs = inv_data.get("battery_packs") if isinstance(inv_data, dict) else getattr(inv_data, "battery_packs", [])
+                if not battery_packs:
+                    continue
+                first_pack = battery_packs[0]
+                sn = first_pack.get("serial_number") if isinstance(first_pack, dict) else getattr(first_pack, "serial_number", None)
+                if sn in (0, "0", "", None):
+                    continue
+
                 for pack_index in range(0, 4):
                     new_pack_key = new_key.replace("<pack_count>", str(pack_index))
                     updated_description = dataclasses.replace(
@@ -2295,6 +2346,12 @@ def get_sensors_for_hybrid_inverter_description(
                     sensors.append(sensor)
 
             elif "<meter_count>" in description.key:
+                if not inv_data:
+                    continue
+                external_meters = inv_data.get("external_meters") if isinstance(inv_data, dict) else getattr(inv_data, "external_meters", [])
+                if not external_meters:
+                    continue
+
                 for meter_index in range(0, 2):
                     new_meter_key = new_key.replace("<meter_count>", str(meter_index))
                     updated_description = dataclasses.replace(
