@@ -155,16 +155,26 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
 
     hass.data[DOMAIN][config_entry.entry_id] = hass_data
 
+    # Refresh primary coordinators first (failures here block setup)
     try:
         if single_phase_inverters or three_phase_inverters or meters:
             await data_coordinator.async_config_entry_first_refresh()
-        await config_coordinator.async_config_entry_first_refresh()
-        await app_info_update_coordinator.async_config_entry_first_refresh()
         if hybrid_inverters:
             await energy_storage_data_coordinator.async_config_entry_first_refresh()
     except Exception as e:
         _LOGGER.error("Failed to initialize communication with DTU: %s", e)
         raise ConfigEntryNotReady(f"DTU connection failed: {e}")
+
+    # Refresh secondary coordinators (failures here are logged but do not block setup)
+    try:
+        await config_coordinator.async_config_entry_first_refresh()
+    except Exception as e:
+        _LOGGER.warning("First refresh of config coordinator failed: %s", e)
+
+    try:
+        await app_info_update_coordinator.async_config_entry_first_refresh()
+    except Exception as e:
+        _LOGGER.warning("First refresh of app info coordinator failed: %s", e)
 
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
     if hybrid_inverters:
