@@ -107,7 +107,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     else:
         dtu = DTU(host, timeout=timeout)
 
-    dtu.rate_limit = 0.0
+    dtu.rate_limit = 1.0
 
     hass_data[HASS_DTU] = dtu
 
