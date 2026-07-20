@@ -427,7 +427,7 @@
         "name": "Grid power factor deviation"
       },
       "grid_line_status": {
-        "name": "Grid line status {phase}"
+        "name": "Grid line status{phase}"
       },
       "inverter_role": {
         "name": "Inverter role"
@@ -484,7 +484,7 @@
         "name": "Inverter external fan speed 3"
       },
       "inverter_line_status": {
-        "name": "Inverter line status {phase}"
+        "name": "Inverter line status{phase}"
       },
       "external_meter_fault_code": {
         "name": "External meter fault code"
@@ -508,31 +508,31 @@
         "name": "Generator frequency"
       },
       "generator_voltage": {
-        "name": "Generator voltage {phase}"
+        "name": "Generator voltage{phase}"
       },
       "generator_current": {
-        "name": "Generator current {phase}"
+        "name": "Generator current{phase}"
       },
       "generator_active_power": {
-        "name": "Generator active power {phase}"
+        "name": "Generator active power{phase}"
       },
       "generator_energy": {
-        "name": "Generator energy {phase}"
+        "name": "Generator energy{phase}"
       },
       "smart_load_total_power": {
         "name": "Smart load total power"
       },
       "smart_load_voltage": {
-        "name": "Smart load voltage {phase}"
+        "name": "Smart load voltage{phase}"
       },
       "smart_load_current": {
-        "name": "Smart load current {phase}"
+        "name": "Smart load current{phase}"
       },
       "smart_load_active_power": {
-        "name": "Smart load active power {phase}"
+        "name": "Smart load active power{phase}"
       },
       "smart_load_energy_consumed": {
-        "name": "Smart load energy consumed {phase}"
+        "name": "Smart load energy consumed{phase}"
       },
       "battery_pack_serial": {
         "name": "Battery pack serial number"
