@@ -12,18 +12,23 @@ It uses the [hoymiles-wifi](https://github.com/suaveolent/hoymiles-wifi) Python 
 
 The custom component was successfully tested with:
 
-- Hoymiles HMS-400W-1T
-- Hoymiles HMS-800W-2T
-- Hoymiles HMS-1000W-2T
-- Hoymiles HMS-2000DW-4T
-- Hoymiles DTU-WLite
-- Hoymiles DTU-Pro (S)
-- Hoymiles HAS-5.0LV-EUG1
-- Hoymiles HYS-4.6LV-EUG1
-- Hoymiles HYT-5.0HV-EUG1
-- Hoymiles HAT-8.0HV-EUG1
-- Solenso H-1000 (not tested for command, only to get data)
-- Solenso DTU_SLS (not tested for command, only to get data)
+- Hoymiles HMS-400W-1T / HMS-800W-2T / HMS-1000W-2T / HMS-2000DW-4T
+- Hoymiles DTU-WLite / DTU-Pro (S)
+- Hoymiles HYS-3.0/3.6/4.0/4.6/5.0/6.0LV-EUG1 (Single-phase hybrid)
+- Hoymiles HYT-5.0/6.0/8.0/10.0/12.0HV-EUG1 (Three-phase hybrid)
+- Solenso H-1000 & DTU_SLS (Telemetry retrieval only)
+
+## Hybrid Inverter (HYS/HYT) Features
+
+This integration provides comprehensive, production-grade support for Hoymiles hybrid energy storage systems (ESS) in local network configurations:
+
+- **Multi-Inverter Topology Recognition**: Automatically maps and communicates with both **Master** and **Slave** inverters in a cluster via the local DTU gateway, querying individual inverter parameters separately.
+- **Dynamic Device Isolation**: Auxiliary sub-systems like **Battery Packs (BMS modules)**, **Smart Loads**, **External Energy Meters**, and **Generators** are dynamically detected and registered as individual, separate devices linked to their parent inverter (`via_device` layout), preventing dashboard clutter.
+- **Zero-Clutter Lazy Registration**: Inactive or unconnected auxiliary sub-systems (returning empty/null telemetry) are automatically ignored during integration startup. If you connect a new BMS Pack or Generator later, the system will detect it and register the device on the next Home Assistant restart.
+- **Enhanced Data Precision & Physical Naming**:
+  - Telemetry entity names and unique IDs are cleaned of phase suffixes where not applicable.
+  - Diagnostic variables are mapped to standardized physical meanings (e.g. *Battery charge/discharge current limits*, *Transformer/Heatsink temperatures*).
+  - Out-of-bounds sentinel mask values (`32767`, `65535`) returned by unconnected sensors are filtered and rendered as `Unavailable` in Home Assistant.
 
 ## Warning
 
