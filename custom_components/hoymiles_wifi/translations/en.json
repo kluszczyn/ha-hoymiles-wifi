@@ -407,6 +407,234 @@
       },
       "battery_to_grid": {
         "name": "Power battery to grid"
+      },
+      "battery_type": {
+        "name": "Battery type"
+      },
+      "battery_status": {
+        "name": "Battery status"
+      },
+      "battery_fault_code": {
+        "name": "Battery fault code"
+      },
+      "battery_current": {
+        "name": "Battery current"
+      },
+      "battery_power": {
+        "name": "Battery power"
+      },
+      "grid_status": {
+        "name": "Grid status"
+      },
+      "grid_power_factor_deviation": {
+        "name": "Grid power factor deviation"
+      },
+      "grid_line_status": {
+        "name": "Grid line status{phase}"
+      },
+      "inverter_role": {
+        "name": "Inverter role"
+      },
+      "inverter_main_frequency": {
+        "name": "Inverter main frequency"
+      },
+      "inverter_secondary_frequency": {
+        "name": "Inverter secondary frequency"
+      },
+      "inverter_anti_islanding_fault": {
+        "name": "Inverter anti-islanding fault"
+      },
+      "inverter_dc_bus_voltage": {
+        "name": "Inverter DC bus voltage"
+      },
+      "inverter_dc_bus_voltage_p": {
+        "name": "Inverter DC bus voltage positive"
+      },
+      "inverter_dc_bus_voltage_n": {
+        "name": "Inverter DC bus voltage negative"
+      },
+      "inverter_battery_voltage": {
+        "name": "Inverter battery voltage"
+      },
+      "inverter_battery_current": {
+        "name": "Inverter battery current"
+      },
+      "inverter_battery_power": {
+        "name": "Inverter battery power"
+      },
+      "inverter_fan_speed_3": {
+        "name": "Inverter fan speed 3"
+      },
+      "inverter_arc_fault_status": {
+        "name": "Inverter arc fault status"
+      },
+      "inverter_coa_status": {
+        "name": "Inverter COA status"
+      },
+      "inverter_ips_enable": {
+        "name": "Inverter IPS enable"
+      },
+      "inverter_battery_temperature": {
+        "name": "Inverter battery temperature"
+      },
+      "inverter_ex_fan_speed_1": {
+        "name": "Inverter external fan speed 1"
+      },
+      "inverter_ex_fan_speed_2": {
+        "name": "Inverter external fan speed 2"
+      },
+      "inverter_ex_fan_speed_3": {
+        "name": "Inverter external fan speed 3"
+      },
+      "inverter_line_status": {
+        "name": "Inverter line status{phase}"
+      },
+      "external_meter_fault_code": {
+        "name": "External meter fault code"
+      },
+      "external_meter_env_temperature": {
+        "name": "External meter environmental temperature"
+      },
+      "external_meter_copper_temperature": {
+        "name": "External meter copper temperature"
+      },
+      "external_meter_relay_status": {
+        "name": "External meter relay status"
+      },
+      "external_meter_status": {
+        "name": "External meter status"
+      },
+      "generator_status": {
+        "name": "Generator status"
+      },
+      "generator_frequency": {
+        "name": "Generator frequency"
+      },
+      "generator_voltage": {
+        "name": "Generator voltage{phase}"
+      },
+      "generator_current": {
+        "name": "Generator current{phase}"
+      },
+      "generator_active_power": {
+        "name": "Generator active power{phase}"
+      },
+      "generator_energy": {
+        "name": "Generator energy{phase}"
+      },
+      "smart_load_total_power": {
+        "name": "Smart load total power"
+      },
+      "smart_load_voltage": {
+        "name": "Smart load voltage{phase}"
+      },
+      "smart_load_current": {
+        "name": "Smart load current{phase}"
+      },
+      "smart_load_active_power": {
+        "name": "Smart load active power{phase}"
+      },
+      "smart_load_energy_consumed": {
+        "name": "Smart load energy consumed{phase}"
+      },
+      "battery_pack_serial": {
+        "name": "Battery pack serial number"
+      },
+      "battery_pack_status": {
+        "name": "Battery pack status"
+      },
+      "battery_pack_health": {
+        "name": "Battery pack health status"
+      },
+      "battery_pack_dcdc_fault": {
+        "name": "Battery pack DC-DC fault code"
+      },
+      "battery_pack_out_voltage": {
+        "name": "Battery pack output voltage"
+      },
+      "battery_pack_curr_limit_chg": {
+        "name": "Battery pack charge current limit"
+      },
+      "battery_pack_curr_limit_dchg": {
+        "name": "Battery pack discharge current limit"
+      },
+      "battery_pack_high_voltage": {
+        "name": "Battery pack cell high voltage"
+      },
+      "battery_pack_low_voltage": {
+        "name": "Battery pack cell low voltage"
+      },
+      "battery_pack_env_temp": {
+        "name": "Battery pack environment temp"
+      },
+      "battery_pack_rad_temp": {
+        "name": "Battery pack radiator temp"
+      },
+      "battery_pack_fet_p_temp": {
+        "name": "Battery pack FET positive temp"
+      },
+      "battery_pack_fet_n_temp": {
+        "name": "Battery pack FET negative temp"
+      },
+      "battery_pack_bms_fault": {
+        "name": "Battery pack BMS fault code"
+      },
+      "battery_pack_soc": {
+        "name": "Battery pack state of charge"
+      },
+      "battery_pack_soh": {
+        "name": "Battery pack state of health"
+      },
+      "battery_pack_voltage": {
+        "name": "Battery pack voltage"
+      },
+      "battery_pack_current": {
+        "name": "Battery pack current"
+      },
+      "battery_pack_power": {
+        "name": "Battery pack power"
+      },
+      "battery_pack_cell_v_high": {
+        "name": "Battery pack cell voltage high"
+      },
+      "battery_pack_cell_v_low": {
+        "name": "Battery pack cell voltage low"
+      },
+      "battery_pack_temp_h_chg": {
+        "name": "Battery pack charge temp high"
+      },
+      "battery_pack_temp_l_chg": {
+        "name": "Battery pack charge temp low"
+      },
+      "battery_pack_v_chg_high": {
+        "name": "Battery pack charge volt high"
+      },
+      "battery_pack_v_chg_low": {
+        "name": "Battery pack charge volt low"
+      },
+      "battery_pack_energy_dchg": {
+        "name": "Battery pack energy discharged"
+      },
+      "battery_pack_energy_chg": {
+        "name": "Battery pack energy charged"
+      },
+      "ips_overvoltage_protection": {
+        "name": "IPS Overvoltage protection config"
+      },
+      "ips_undervoltage_protection": {
+        "name": "IPS Undervoltage protection config"
+      },
+      "ips_overfrequency_protection": {
+        "name": "IPS Overfrequency protection config"
+      },
+      "ips_underfrequency_protection": {
+        "name": "IPS Underfrequency protection config"
+      },
+      "ips_error_code": {
+        "name": "IPS protection system error code"
+      },
+      "inverter_pv_temperature": {
+        "name": "Inverter PV temperature"
       }
     },
     "button": {
