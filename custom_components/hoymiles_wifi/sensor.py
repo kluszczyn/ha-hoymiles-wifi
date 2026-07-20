@@ -2924,6 +2924,10 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
 
         new_native_value = resolve_path(self.coordinator.data, self._attribute_name)
 
+        if new_native_value in (32767, 65535):
+            self._native_value = None
+            return
+
         if new_native_value is not None and self._conversion_factor is not None:
             new_native_value *= self._conversion_factor
 
