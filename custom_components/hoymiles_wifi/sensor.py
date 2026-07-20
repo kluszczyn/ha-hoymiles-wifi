@@ -2146,9 +2146,12 @@ def get_sensors_for_description(
     dtu_serial_number: str,
     inverters: list,
     ports: list,
-    meters: list = [],
+    meters: list | None = None,
 ) -> list[SensorEntity]:
     """Get sensors for the given description."""
+
+    if meters is None:
+        meters = []
 
     sensors = []
 
@@ -2238,7 +2241,7 @@ def get_sensors_for_hybrid_inverter_description(
                 if not is_allowed_slave_sensor:
                     continue
 
-            # Pobranie danych telemetrycznych inwertera
+            # Retrieve inverter telemetry data from coordinator
             inv_data = None
             if coordinator and coordinator.data:
                 inverters_data = None
@@ -2420,7 +2423,7 @@ def get_sensors_for_hybrid_inverter_description(
 class HoymilesDataSensorEntity(HoymilesCoordinatorEntity, RestoreSensor):
     """Represents a sensor entity for Hoymiles data."""
 
-    _attr_has_entity_name = True  # Aktywacja nowoczesnego standardu nazw HA
+    _attr_has_entity_name = True  # Enable modern HA entity naming standard
 
     def __init__(
         self,
@@ -2695,7 +2698,7 @@ class HoymilesDiagnosticSensorEntity(
 class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor):
     """Represents a sensor entity for Hoymiles data."""
 
-    _attr_has_entity_name = True  # Nowoczesna architektura nazw HA
+    _attr_has_entity_name = True  # Enable modern HA entity naming standard
 
     def __init__(
         self,
@@ -2794,7 +2797,7 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
                 identifiers={(DOMAIN, f"battery_pack_{serial}_{pack_idx}")},
                 name=f"Battery Pack {pack_idx} ({role_suffix})",
                 manufacturer="Hoymiles",
-                model=f"Battery Pack Module",
+                model="Battery Pack Module",
                 via_device=(DOMAIN, f"inverter_{serial}"),
             )
 
@@ -2809,7 +2812,7 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
                 identifiers={(DOMAIN, f"smart_load_{serial}_{load_idx}")},
                 name=f"Smart Load {load_idx} ({role_suffix})",
                 manufacturer="Hoymiles",
-                model=f"Smart Load Terminal",
+                model="Smart Load Terminal",
                 via_device=(DOMAIN, f"inverter_{serial}"),
             )
 
@@ -2824,7 +2827,7 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
                 identifiers={(DOMAIN, f"external_meter_{serial}_{meter_idx}")},
                 name=f"External Meter {meter_idx} ({role_suffix})",
                 manufacturer="Hoymiles",
-                model=f"External Energy Meter",
+                model="External Energy Meter",
                 via_device=(DOMAIN, f"inverter_{serial}"),
             )
 
@@ -2833,7 +2836,7 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
                 identifiers={(DOMAIN, f"generator_{serial}")},
                 name=f"Generator ({role_suffix})",
                 manufacturer="Hoymiles",
-                model=f"Generator Terminal",
+                model="Generator Terminal",
                 via_device=(DOMAIN, f"inverter_{serial}"),
             )
 
@@ -2889,8 +2892,8 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
                 inv_idx = int(path.split("[")[1].split("]")[0])
                 role_infix = "m" if inv_idx == 0 else f"s{inv_idx}"
                 path = path.replace(f"[{inv_idx}]", role_infix)
-            except Exception:
-                pass
+            except (ValueError, IndexError) as err:
+                _LOGGER.debug("Failed to parse inv_idx from path '%s': %s", path, err)
         return {"source": path}
 
     @property
@@ -2900,14 +2903,14 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
 
     def update_state_value(self):
         """Update the state value of the sensor based on the coordinator data."""
-        new_native_value = 0.0
+        new_native_value = None
 
         if (
             self.coordinator is None
             or not hasattr(self.coordinator, "data")
             or self.coordinator.data is None
         ):
-            self._native_value = 0.0
+            self._native_value = None
             return
 
         def resolve_path(obj, path):
@@ -2920,7 +2923,7 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
                     try:
                         obj = obj[index]
                     except (IndexError, TypeError):
-                        logging.debug(
+                        _LOGGER.debug(
                             "Index %d out of range for object: %s (normal when loading/offline)", index, obj
                         )
                         return None
@@ -2975,13 +2978,13 @@ class HoymilesEnergyStorageSensorEntity(HoymilesCoordinatorEntity, RestoreSensor
         self._last_update_state = datetime.now()
         self._native_value = new_native_value
 
-        async def async_added_to_hass(self) -> None:
-            """Call when entity about to be added to hass."""
-            await super().async_added_to_hass()
+    async def async_added_to_hass(self) -> None:
+        """Call when entity about to be added to hass."""
+        await super().async_added_to_hass()
 
-            state = await self.async_get_last_sensor_data()
-            if state:
-                self.last_known_value = state.native_value
+        state = await self.async_get_last_sensor_data()
+        if state:
+            self._last_known_value = state.native_value
 
 
 # Mapping of numeric EMS/BMS working mode values to human-readable labels

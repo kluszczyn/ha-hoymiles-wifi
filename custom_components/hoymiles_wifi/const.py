@@ -1,8 +1,9 @@
 """Constants for the Hoymiles integration."""
 
+from enum import StrEnum
+
 DOMAIN = "hoymiles_wifi"
 NAME = "Hoymiles"
-DOMAIN = "hoymiles_wifi"
 DOMAIN_DATA = f"{DOMAIN}_data"
 CONFIG_VERSION = 5
 
@@ -31,6 +32,7 @@ DEFAULT_APP_INFO_UPDATE_INTERVAL_SECONDS = 60 * 60 * 2
 HASS_DATA_COORDINATOR = "data_coordinator"
 HASS_CONFIG_COORDINATOR = "config_coordinator"
 HASS_APP_INFO_COORDINATOR = "app_info_coordinator"
+# Note: string value intentionally kept as-is to avoid breaking existing installations (Option A)
 HASS_ENERGY_STORAGE_DATA_COORDINATOR = "energy_stroage_data_coordinator"
 HASS_DTU = "dtu"
 HASS_DATA_UNSUB_OPTIONS_UPDATE_LISTENER = "unsub_options_update_listener"
@@ -50,10 +52,10 @@ If you have any issues with it please open an issue here:
 -------------------------------------------------------------------
 """
 
-from enum import StrEnum
 
 class BatteryStatus(StrEnum):
     """Battery status states."""
+
     STANDBY = "standby"
     CHARGING = "charging"
     DISCHARGING = "discharging"
@@ -62,8 +64,10 @@ class BatteryStatus(StrEnum):
     EQUALIZATION_CHARGING = "equalization_charging"
     UNKNOWN = "unknown"
 
+
 class InverterStatus(StrEnum):
     """Inverter status states."""
+
     POWER_ON_INIT = "power_on_init"
     STANDBY = "standby"
     GRID_ON_TEST = "grid_on_test"
@@ -75,8 +79,10 @@ class InverterStatus(StrEnum):
     GEN_MODE = "gen_mode"
     UNKNOWN = "unknown"
 
+
 class EmsWorkingMode(StrEnum):
     """EMS working mode states."""
+
     SELF_CONSUMPTION = "self_consumption"
     ECONOMY = "economy"
     BACKUP = "backup"
@@ -86,6 +92,7 @@ class EmsWorkingMode(StrEnum):
     PEAK_SHAVING = "peak_shaving"
     TIME_OF_USE = "time_of_use"
     UNKNOWN = "unknown"
+
 
 BATTERY_STATUS_MAP: dict[int, BatteryStatus] = {
     0: BatteryStatus.STANDBY,
@@ -118,4 +125,3 @@ EMS_WORKING_MODE_MAP: dict[int, EmsWorkingMode] = {
     7: EmsWorkingMode.PEAK_SHAVING,
     8: EmsWorkingMode.TIME_OF_USE,
 }
-
