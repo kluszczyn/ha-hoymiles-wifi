@@ -872,7 +872,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.internal_charge_mode",
-        translation_key="internal_charge_mode",
+        translation_key="battery_charge_current_limit",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -883,7 +883,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.internal_discharge_mode",
-        translation_key="internal_discharge_mode",
+        translation_key="battery_discharge_current_limit",
         native_unit_of_measurement=UnitOfElectricCurrent.AMPERE,
         device_class=SensorDeviceClass.CURRENT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -894,7 +894,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.cell_voltage_high",
-        translation_key="cell_voltage_high",
+        translation_key="battery_charge_voltage_limit",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -906,7 +906,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.cell_voltage_low",
-        translation_key="cell_voltage_low",
+        translation_key="battery_discharge_voltage_limit",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -918,7 +918,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.temp_high_charge",
-        translation_key="temp_high_charge",
+        translation_key="battery_cell_temp_max",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -928,7 +928,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.temp_low_charge",
-        translation_key="temp_low_charge",
+        translation_key="battery_cell_temp_min",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -978,7 +978,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_charge_high",
-        translation_key="voltage_charge_high",
+        translation_key="battery_cell_voltage_max",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -990,7 +990,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].battery_management.voltage_charge_low",
-        translation_key="voltage_charge_low",
+        translation_key="battery_cell_voltage_min",
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -1337,7 +1337,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.temp_inverter",
-        translation_key="inverter_temperature",
+        translation_key="inverter_temperature_inside",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -1345,7 +1345,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.temp_pv",
-        translation_key="inverter_pv_temperature",
+        translation_key="inverter_temperature_heatsink",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -1353,7 +1353,7 @@ HOYMILES_ENERGY_STORAGE_SENSORS = [
     ),
     HoymilesEnergyStorageSensorEntityDescription(
         key="[<inverter_count>].inverter.param.temp_internal",
-        translation_key="inverter_internal_temperature",
+        translation_key="inverter_temperature_transformer",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
